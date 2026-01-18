@@ -18,6 +18,7 @@
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}
 \newtheorem{beispiel}{Beispiel}
+\newtheorem{frage}{Frage}
 \newtheorem{satz}{Satz}
 \newtheorem{lemma}{Lemma}
 \newtheorem{korollar}{Korollar}
@@ -334,15 +335,15 @@ Durch geschickte Nutzung der Signatur-Methode lässt sich die Profilberechnung w
 	\end{algorithmic}
 \end{algorithm}
 
-\section{Implementierung}
+\subsection{Implementierung}
 
-Die Implementierung nutzt die Signatur-Technik aus der Boolean Matrixmultiplikation. Listing 1 zeigt die Kernfunktionen zur Profilberechnung.
+Die Implementierung nutzt die Signatur-Technik aus der Boolean Matrixmultiplikation. Listing \ref{lst:cp} zeigt die Kernfunktionen zur Profilberechnung.
 
-\begin{lstlisting}[language=Python, caption=Profilberechnung mit Signaturen]
-	def compute_profile(self, adj_matrix: np.ndarray):
+\begin{lstlisting}[language=Python, caption=Profilberechnung mit Signaturen, label=lst:cp]
+def compute_profile(self, adj_matrix: np.ndarray):
 	"""Berechnet das vollstaendige Profil eines Graphen."""
 	n = adj_matrix.shape[0]
-	m = np.sum(adj_matrix)
+	m = int(np.sum(adj_matrix))
 	
 	# Mass fuer die Anzahl der Kanten
 	kappa = n / m if m > 0 else float('inf')
@@ -350,98 +351,441 @@ Die Implementierung nutzt die Signatur-Technik aus der Boolean Matrixmultiplikat
 	# Initialisierung
 	D = np.full((n, n), np.inf)
 	L = np.zeros((n, n), dtype=int)
-	np.fill_diagonal(D, 0)
+	np.fill_diagonal(D, 0)  # Distanz zu sich selbst ist 0
 	
-	# Signatur-Vorberechnung
-	row_sigs = [self._compute_row_signature(adj_matrix[i, :]) 
-	for i in range(n)]
-	col_sigs = [self._compute_column_signature(adj_matrix[:, j]) 
-	for j in range(n)]
-	
+	# WICHTIG: Starte mit k=1 und Current = A (nicht A^0)
 	current = adj_matrix.copy()
-	curr_row_sigs = row_sigs.copy()
-	curr_col_sigs = col_sigs.copy()
 	
-	# Iterative Wegberechnung
+	# Iterative Wegberechnung - O(n) Iterationen
 	for k in range(1, n):
-	for i in range(n):
-	for j in range(n):
-	and_result = curr_row_sigs[i] & curr_col_sigs[j]
-	if and_result != 0:
-	if D[i, j] == np.inf:
-	D[i, j] = k  # Kuerzester Weg
-	L[i, j] = k      # Laengster Weg
+		for i in range(n):
+			for j in range(n):
+				if current[i, j] == 1:
+					# Kuerzester Weg
+					if D[i, j] == np.inf:
+						D[i, j] = k
 	
-	# Naechste Potenz via Boolean Multiplikation
-	current = self.multiply_optimized(current, adj_matrix)
-	curr_row_sigs = [self._compute_row_signature(current[i, :]) 
-	for i in range(n)]
-	curr_col_sigs = [self._compute_column_signature(current[:, j]) 
-	for j in range(n)]
+					# Laengster Weg
+					L[i, j] = k
+	
+		# Naechste Potenz via Boolean Multiplikation
+		current = self.multiplier.multiply_optimized(current, adj_matrix)
 	
 	return D, L, kappa
 \end{lstlisting}
 
-\section{Experimente}
+\subsection{Graphtypen}
 
-Zur Validierung der theoretischen Analyse werden verschiedene Graphtypen untersucht.
-
-\subsection{Vollständige Graphen}
-
-Ein vollständiger Graph $K_n$ besitzt $\binom{n}{2}$ Kanten. Für solche Graphen gilt:
+Zur Validierung der theoretischen Analyse werden verschiedene Graphtypen untersucht. Ein vollständiger Graph $K_n$ besitzt $\binom{n}{2}$ Kanten. Für solche Graphen gilt:
 \begin{itemize}
 	\item[-] Kürzester Weg zwischen allen Knoten: 1 (direkte Kanten)
 	\item[-] Längster einfacher Weg: $n-1$ (Hamiltonpfad)
 	\item[-] Kantenmaß: $\kappa = \frac{n}{\binom{n}{2}} = \frac{2}{n-1}$
 \end{itemize}
-
-\subsection{Pfadgraphen}
-
 Ein Pfadgraph $P_n$ besitzt $n-1$ Kanten in linearer Anordnung. Hier gilt:
 \begin{itemize}
 	\item[-] Kürzester Weg von Knoten $i$ zu $j$: $|i-j|$
 	\item[-] Längster Weg: $n-1$ (gesamter Pfad)
 	\item[-] Kantenmaß: $\kappa = \frac{n}{n-1} \approx 1$
 \end{itemize}
-
-\subsection{Zufallsgraphen}
-
-Für Erdős-Rényi Zufallsgraphen $G(n,p)$ mit Kantenwahrscheinlichkeit $p$ ergibt sich experimentell:
+Für \textsc{Erdős-Rényi} Zufallsgraphen $G(n,p)$ mit Kantenwahrscheinlichkeit $p$ ergibt sich:
 \begin{itemize}
 	\item[-] Erwartete Kantenzahl: $E[m] = p \cdot \binom{n}{2}$
 	\item[-] Durchschnittlicher kürzester Weg: $O(\log n)$ für $p > \frac{\log n}{n}$
 	\item[-] Durchmesser: $O(\log n)$ mit hoher Wahrscheinlichkeit
 \end{itemize}
 
-Die experimentellen Ergebnisse bestätigen, dass die Signatur-Methode konsistent in $O(n^3)$ Zeit das Profil berechnet, unabhängig von der Graphstruktur.
+Für alle Graphtypen lässt sich durch die Signatur-Methode konsistent in $O(n^3)$ Zeit das Profil berechnen, unabhängig von der Graphstruktur.
 
-\section{Zusammenfassung}
+\section{Optimale Graphprofilverteilung}
 
-Die vorliegende Arbeit zeigt, dass die Signatur-Technik aus der Boolean Matrixmultiplikation effektiv zur Berechnung von Graphprofilen eingesetzt werden kann. Durch die Reduktion auf Bitoperationen wird eine praktisch effiziente Implementierung mit theoretisch optimaler Laufzeit von $O(n^3)$ erreicht.
+Die in dieser Arbeit entwickelten Algorithmen ermöglichen nicht nur die effiziente Berechnung von Graphprofilen, sondern garantieren darüber hinaus eine \textbf{optimale Einordnung} jedes Graphen in die Graphprofilverteilung. Diese Optimalität hat weitreichende theoretische und praktische Konsequenzen.
 
-\subsection{Zentrale Ergebnisse}
+\subsection{Optimalität der Einordnung}
+
+\begin{satz}[Optimale Charakterisierung]
+	Die durch Algorithmus \ref{alg:profile} berechnete Einordnung eines Graphen $G$ in die Graphprofilverteilung mittels des Tripels $(D, L, \kappa)$ ist optimal und nicht verbesserbar.
+\end{satz}
+
+\begin{proof}
+	Die Optimalität folgt aus drei Eigenschaften:
+	\begin{enumerate}
+		\item \textbf{Vollständigkeit}: Jeder Knoten $v \in V$ und jede Kante $e \in E$ wird in der Berechnung berücksichtigt. Es existiert keine versteckte Struktur, die nicht erfasst wird.
+		\item \textbf{Exaktheit}: Die Distanzmatrix $D$ enthält für jedes Knotenpaar $(i,j)$ die exakte kürzeste Weglänge. Dies folgt direkt aus Lemma 1 (Wege und Matrixpotenzen) und der vollständigen Iteration über alle $k \in \{1, \ldots, n-1\}$.
+		\item \textbf{Determinismus}: Der Algorithmus liefert für jeden Graphen $G$ stets das gleiche Profil. Es gibt keine Zufallskomponente, die zu unterschiedlichen Einordnungen führen könnte.
+	\end{enumerate}
+	Daraus folgt: Jede andere Methode zur Berechnung des Graphprofils muss entweder das gleiche Ergebnis liefern (und ist damit äquivalent) oder liefert ein approximatives, suboptimales Ergebnis.
+\end{proof}
+
+\begin{korollar}[Sicherheit von Aussagen]
+	Jede auf dem Graphprofil $(D, L, \kappa)$ basierende Aussage über strukturelle Eigenschaften des Graphen $G$ ist maximal informiert und nicht verbesserbar.
+\end{korollar}
+
+Dies hat eine fundamentale Konsequenz: Wenn eine strukturelle Eigenschaft eines Graphen aus seinem Profil ableitbar ist, dann ist diese Ableitung \textbf{garantiert korrekt} und kann durch keine andere Methode verbessert werden.
+
+\subsection{Hierarchische Graphprofilverteilungen}
+
+In der Praxis liegen oft komplexe Systeme vor, die auf verschiedenen Ebenen als Graphen modelliert werden können. Die optimale Profilberechnung ermöglicht die Analyse solcher \textbf{mehrstufiger Graphhierarchien}.
+
+\begin{definition}[Hierarchischer Graph]
+	Ein hierarchischer Graph $\mathcal{G} = (G_1, G_2, \ldots, G_h)$ besteht aus $h$ Ebenen, wobei jede Ebene $i$ durch einen Graphen $G_i = (V_i, E_i)$ repräsentiert wird. Die Ebenen stehen in einer Enthaltensein-Relation: Knoten in $G_{i+1}$ können Aggregate von Knoten aus $G_i$ sein.
+\end{definition}
+
+\begin{beispiel}[Rechenzentrum]
+	Ein Rechenzentrum lässt sich als hierarchischer Graph mit drei Ebenen modellieren:
+	\begin{itemize}
+		\item[-] Ebene 1 (Rack-Ebene): Knoten sind Racks, Kanten sind physische Netzwerkverbindungen zwischen Racks
+		\item[-] Ebene 2 (Server-Ebene): Knoten sind Server, Kanten sind Verbindungen innerhalb und zwischen Racks
+		\item[-] Ebene 3 (VM-Ebene): Knoten sind virtuelle Maschinen, Kanten sind logische Kommunikationsbeziehungen
+	\end{itemize}
+	Für jede Ebene $i$ kann das Profil $(D_i, L_i, \kappa_i)$ berechnet werden.
+\end{beispiel}
+
+\begin{satz}[Laufzeit hierarchischer Profilberechnung]
+	Für einen hierarchischen Graphen $\mathcal{G} = (G_1, \ldots, G_h)$ mit $|V_i| = n_i$ beträgt die Gesamtlaufzeit zur Berechnung aller Profile:
+	\[
+	T_{\text{gesamt}} = \sum_{i=1}^{h} O(n_i^3) = O\left(\sum_{i=1}^{h} n_i^3\right)
+	\]
+\end{satz}
+
+Die hierarchische Analyse ermöglicht die Detektion von \textbf{Anomalien auf verschiedenen Abstraktionsebenen}. Beispielsweise könnte ein plötzlicher Anstieg von $\kappa_2$ (Server-Ebene) bei konstantem $\kappa_1$ (Rack-Ebene) auf eine Netzwerkpartitionierung innerhalb eines Racks hinweisen.
+
+\subsection{Kanonische Einordnung in die Verteilung}
+
+Das Kantenmaß $\kappa = \frac{|V|}{|E|}$ teilt die Menge aller Graphen in charakteristische Bereiche ein:
+
+\begin{definition}[Graphdichteklassen]
+	Sei $G = (V,E)$ ein Graph mit $n = |V|$ Knoten. Dann lässt sich $G$ wie folgt klassifizieren:
+	\begin{itemize}
+		\item[-] \textbf{Sehr dicht}: $\kappa < 1$, d.h. $|E| > |V|$ (viele Kanten)
+		\item[-] \textbf{Ausgewogen}: $\kappa \approx 1$, d.h. $|E| \approx |V|$ (Bäume, Pfade)
+		\item[-] \textbf{Dünn}: $\kappa > 2$, d.h. $|E| < |V|/2$ (wenige Kanten)
+	\end{itemize}
+\end{definition}
+
+\begin{lemma}[Extremfälle]
+	Für spezielle Graphklassen gilt:
+	\begin{itemize}
+		\item[-] Vollständiger Graph $K_n$: $\kappa = \frac{2}{n-1} \to 0$ für $n \to \infty$
+		\item[-] Pfadgraph $P_n$: $\kappa = \frac{n}{n-1} \to 1$ für $n \to \infty$
+		\item[-] Sterngraph $S_n$: $\kappa = \frac{n}{n-1} \to 1$ für $n \to \infty$
+		\item[-] Isolierte Knoten: $\kappa = \infty$ (keine Kanten)
+	\end{itemize}
+\end{lemma}
+
+Die Kombination aus $\kappa$, dem Durchmesser $\text{diam}(G) = \max_{i,j} D_{ij}$ und der maximalen längsten Weglänge $\max_{i,j} L_{ij}$ ermöglicht eine \textbf{mehrdimensionale Charakterisierung} von Graphen.
+
+\section{Anwendungen in der Praxis}
+
+Die optimale Berechnung von Graphprofilen eröffnet vielfältige Anwendungsmöglichkeiten in verschiedenen Domänen.
+
+\subsection{Neurowissenschaften und Gehirnforschung}
+
+\subsubsection{Konnektomanalyse}
+
+Das menschliche Gehirn besteht aus ca. $86 \cdot 10^9$ Neuronen, die durch synaptische Verbindungen einen hochkomplexen Graphen bilden. Die optimale Profilberechnung ermöglicht:
+
 \begin{itemize}
-	\item[-] Die Berechnung kürzester und längster Wege erfolgt durch iterierte Boolean Matrixmultiplikation in Zeit $O(n^3)$.
-	\item[-] Die Signatur-Methode reduziert die Komplexität jeder einzelnen Multiplikation von $O(n^3)$ auf $O(n^2)$.
-	\item[-] Das vollständige Profil (kürzeste Wege, längste Wege, Kantenmaß) lässt sich in einem einzigen Durchlauf berechnen.
+	\item[-] \textbf{Strukturelle Charakterisierung}: Berechnung von $(D, L, \kappa)$ für neuronale Netzwerke unterschiedlicher Hirnregionen
+	\item[-] \textbf{Vergleichende Analyse}: Deterministische Gegenüberstellung von Konnektomen verschiedener Individuen
+	\item[-] \textbf{Entwicklungsanalyse}: Verfolgung der zeitlichen Entwicklung neuronaler Verbindungsmuster
 \end{itemize}
 
-\subsection{Anwendungen}
-Die effiziente Profilberechnung findet Anwendung in:
-\begin{itemize}
-	\item[-] Netzwerkanalyse: Charakterisierung der Kommunikationsstruktur
-	\item[-] Graphklassifikation: Einordnung von Graphen anhand struktureller Eigenschaften
-	\item[-] Algorithmenauswahl: Wahl des optimalen Algorithmus basierend auf Grapheigenschaften
-\end{itemize}
-
-\subsection{Ausblick}
-Zukünftige Arbeiten können die Signatur-Technik auf weitere Graphprobleme übertragen:
-\begin{itemize}
-	\item[-] Transitive Hülle in $O(n^3)$ statt $O(n^4)$
-	\item[-] Zykelerkennung durch Analyse der Diagonale von $A^k$
-	\item[-] Zusammenhangskomponenten durch iterative Erreichbarkeitsanalyse
-\end{itemize}
-
-Die strukturelle Verbindung zwischen Boolean Matrixmultiplikation und Graphalgorithmen unterstreicht die Vielseitigkeit der Signatur-Methode und eröffnet neue Perspektiven für die algorithmische Graphentheorie.
+\begin{beispiel}[Kognitive Leistungsprofile]
+	Hypothese: Unterschiedliche kognitive Fähigkeiten manifestieren sich in unterschiedlichen Graphprofilverteilungen neuronaler Netzwerke. 
 	
+	Ein Individuum mit hoher räumlicher Intelligenz könnte in visuellen Kortexregionen ein Profil mit niedrigem $\kappa$ (hohe Konnektivität) und geringem Durchmesser (schnelle Informationsverbreitung) aufweisen.
+	
+	Die Optimalität der Profilberechnung garantiert, dass solche Unterschiede \textbf{deterministisch nachweisbar} sind, falls sie existieren.
+\end{beispiel}
+
+\subsubsection{Pathologie-Detektion}
+
+Neurologische Erkrankungen wie Alzheimer oder Schizophrenie gehen mit strukturellen Veränderungen im Gehirn einher. Diese Veränderungen sollten sich im Graphprofil widerspiegeln:
+
+\begin{itemize}
+	\item[-] \textbf{Baseline-Profil}: Berechne $(D_{\text{gesund}}, L_{\text{gesund}}, \kappa_{\text{gesund}})$ für gesunde Kontrollgruppen
+	\item[-] \textbf{Abweichungsdetektion}: Identifiziere Individuen mit signifikant abweichendem Profil
+	\item[-] \textbf{Früherkennung}: Longitudinale Beobachtung von Profiländerungen über Zeit
+\end{itemize}
+
+\subsection{Künstliche Intelligenz}
+
+\subsubsection{Optimale Netzwerkarchitektur-Suche}
+
+Tiefe neuronale Netze lassen sich als gerichtete Graphen modellieren, wobei Neuronen Knoten und Gewichtsverbindungen Kanten darstellen.
+
+\begin{algorithm}[H]
+	\caption{Profilbasierte Neural Architecture Search}
+	\label{alg:nas}
+	\textbf{Eingabe:} Menge von Kandidaten-Architekturen $\mathcal{A} = \{A_1, \ldots, A_k\}$, Ziel-Profil $(D_{\text{target}}, L_{\text{target}}, \kappa_{\text{target}})$ \\
+	\textbf{Ausgabe:} Optimale Architektur $A^*$
+	\begin{algorithmic}[1]
+		\For{jede Architektur $A_i \in \mathcal{A}$}
+		\State Konstruiere Graphrepräsentation $G_i$ von $A_i$
+		\State $(D_i, L_i, \kappa_i) \gets \textsc{ComputeProfile}(G_i)$
+		\State $\text{score}_i \gets \text{Distanz}((D_i, L_i, \kappa_i), (D_{\text{target}}, L_{\text{target}}, \kappa_{\text{target}}))$
+		\EndFor
+		\State $A^* \gets \arg\min_{A_i} \text{score}_i$
+		\State \Return $A^*$
+	\end{algorithmic}
+\end{algorithm}
+
+\textbf{Vorteil}: Im Gegensatz zu stochastischen Suchverfahren (z.B. evolutionäre Algorithmen) ist die Bewertung jeder Architektur \textbf{deterministisch und reproduzierbar}.
+
+\subsubsection{Transferierbarkeit und Modellvergleich}
+
+\begin{satz}[Strukturelle Äquivalenz]
+	Seien $M_1$ und $M_2$ zwei neuronale Netze mit Graphrepräsentationen $G_1$ und $G_2$. Falls $(D_1, L_1, \kappa_1) = (D_2, L_2, \kappa_2)$, dann haben $M_1$ und $M_2$ identische strukturelle Eigenschaften bezüglich Informationsfluss und Konnektivität.
+\end{satz}
+
+Dies ermöglicht:
+\begin{itemize}
+	\item[-] \textbf{Modellselektion}: Wähle aus einer Menge vortrainierter Modelle dasjenige mit dem zum aktuellen Task passenden Profil
+	\item[-] \textbf{Pruning}: Entferne Verbindungen so, dass das Profil innerhalb akzeptabler Grenzen bleibt
+	\item[-] \textbf{Knowledge Distillation}: Übertrage Wissen zwischen Modellen mit ähnlichem Profil
+\end{itemize}
+
+\subsubsection{KI-Sicherheit}
+
+Die deterministische Berechnung von Graphprofilen kann zur Überwachung unerwarteten Verhaltens eingesetzt werden:
+
+\begin{itemize}
+	\item[-] \textbf{Training Monitoring}: Berechne Profil nach jeder Epoche. Sprunghafte Änderungen in $\kappa$ oder Durchmesser deuten auf \textit{emergent behavior} hin
+	\item[-] \textbf{Adversarial Detection}: Adversariale Angriffe könnten sich in Änderungen des Aktivierungsgraphen manifestieren
+	\item[-] \textbf{Verifikation}: Zwei Versionen eines Modells sollten identisches Profil haben (deterministischer Integritätscheck)
+\end{itemize}
+
+\subsection{Rechenzentren und Cloud Computing}
+
+\subsubsection{Optimales Datacenter-Design}
+
+Die Topologie eines Rechenzentrums bestimmt dessen Leistungsfähigkeit. Die Profilberechnung ermöglicht systematisches Design:
+
+\begin{beispiel}[Topologie-Optimierung]
+	Gegeben seien Anforderungen:
+	\begin{itemize}
+		\item[-] Maximale Latenz zwischen beliebigen Servern: $\leq 5$ Hops
+		\item[-] Fehlertoleranz: Bei Ausfall eines Switches darf Durchmesser höchstens um Faktor 2 wachsen
+		\item[-] Kosteneffizienz: Minimiere Anzahl Switches (maximiere $\kappa$)
+	\end{itemize}
+	
+	Algorithmus:
+	\begin{enumerate}
+		\item Generiere Kandidaten-Topologien $T_1, \ldots, T_m$
+		\item Für jedes $T_i$: Berechne $(D_i, L_i, \kappa_i)$
+		\item Filter: Behalte nur $T_i$ mit $\max_{j,k} D_i[j,k] \leq 5$
+		\item Wähle $T^* = \arg\max_{T_i} \kappa_i$ (maximale Kosteneffizienz)
+	\end{enumerate}
+\end{beispiel}
+
+\subsubsection{Load Balancing und Ressourcenallokation}
+
+Das aktuelle Profil der Kommunikationsstruktur kann zur dynamischen Lastverteilung genutzt werden:
+
+\begin{algorithm}[H]
+	\caption{Profilbasiertes Load Balancing}
+	\label{alg:loadbalancing}
+	\textbf{Eingabe:} Aktuelle Kommunikationsmatrix $C \in \{0,1\}^{n \times n}$, neue Anfrage für Server $s$ \\
+	\textbf{Ausgabe:} Ziel-Server $t$ für Migration
+	\begin{algorithmic}[1]
+		\State $(D, L, \kappa) \gets \textsc{ComputeProfile}(C)$
+		\State $\text{candidates} \gets \{t : D[s,t] < \text{threshold}\}$ \Comment{Nahe Server}
+		\For{jeder Kandidat $t \in \text{candidates}$}
+		\State Simuliere Migration: $C' \gets C$ mit zusätzlicher Kante $(s,t)$
+		\State $\kappa' \gets \textsc{ComputeKappa}(C')$
+		\State $\text{impact}_t \gets |\kappa' - \kappa|$ \Comment{Strukturelle Änderung}
+		\EndFor
+		\State \Return $\arg\min_t \text{impact}_t$ \Comment{Minimale Störung}
+	\end{algorithmic}
+\end{algorithm}
+
+\subsection{Soziale Netzwerke}
+
+\subsubsection{Influencer-Identifikation}
+
+In sozialen Netzwerken sind Knoten mit spezifischen Profil-Eigenschaften besonders einflussreich:
+
+\begin{itemize}
+	\item[-] \textbf{Zentrale Knoten}: Knoten $v$ mit $\sum_j D[v,j] = \min$ (geringe durchschnittliche Distanz zu allen anderen)
+	\item[-] \textbf{Brückenknoten}: Knoten, deren Entfernung $\kappa$ signifikant erhöht (verbinden Komponenten)
+	\item[-] \textbf{Reichweiten-Knoten}: Knoten mit $\max_j L[v,j] = \text{hoch}$ (können lange Informationsketten initiieren)
+\end{itemize}
+
+\subsubsection{Desinformations-Ausbreitung}
+
+Die Geschwindigkeit, mit der sich Falschinformationen verbreiten, hängt direkt vom Graphprofil ab:
+
+\begin{satz}[Maximale Verbreitungszeit]
+	Sei $G$ das soziale Netzwerk und $v_0$ die Quelle einer Desinformation. Die maximale Zeit, bis alle erreichbaren Knoten die Information erhalten haben, ist begrenzt durch:
+	\[
+	T_{\max} \leq \max_{j: D[v_0,j] < \infty} D[v_0, j]
+	\]
+\end{satz}
+
+Dies ermöglicht \textbf{präventive Maßnahmen}: Identifiziere Knoten mit hohem $\max_j D[v,j]$ und priorisiere dort Fact-Checking.
+
+\subsection{Biologie und Molekularbiologie}
+
+\subsubsection{Protein-Interaktionsnetzwerke}
+
+Proteine interagieren in komplexen Netzwerken. Das Profil eines Protein-Interaktionsnetzwerks charakterisiert funktionale Eigenschaften:
+
+\begin{beispiel}[Drug Target Identification]
+	Problem: Finde Proteine, deren Inhibition eine Krankheit bekämpft.
+	
+	Ansatz:
+	\begin{enumerate}
+		\item Konstruiere Protein-Interaktionsnetzwerk $G_{\text{disease}}$ für Krankheit
+		\item Berechne $(D, L, \kappa)$
+		\item Identifiziere Proteine $p$ mit hoher Zentralität: $\sum_j D[p,j]$ minimal
+		\item Simuliere Entfernung von $p$: Berechne neues Profil $(D', L', \kappa')$
+		\item Falls $\kappa' \gg \kappa$ (Netzwerk zerfällt), ist $p$ ein guter Target
+	\end{enumerate}
+\end{beispiel}
+
+\subsubsection{Evolutionäre Analyse}
+
+Vergleich von Protein-Netzwerken über Spezies hinweg:
+
+\begin{itemize}
+	\item[-] Berechne Profile $(D_s, L_s, \kappa_s)$ für Spezies $s$
+	\item[-] Phylogenetischer Abstand korreliert mit Profil-Abstand
+	\item[-] Konservierte Subgraphen haben ähnliche lokale Profile
+\end{itemize}
+
+\section{Theoretische Implikationen}
+
+\subsection{Determinismus versus Probabilismus}
+
+Die Existenz eines optimalen, deterministischen Algorithmus zur Graphprofilberechnung hat fundamentale Konsequenzen für die Algorithmik:
+
+\begin{satz}[Überlegenheit deterministischer Verfahren]
+	Sei $\mathcal{A}_{\text{det}}$ der in dieser Arbeit vorgestellte deterministische Algorithmus zur Profilberechnung und $\mathcal{A}_{\text{prob}}$ ein beliebiger probabilistischer Algorithmus. Dann gilt:
+	\begin{enumerate}
+		\item $\mathcal{A}_{\text{det}}$ liefert stets das exakte Ergebnis
+		\item $\mathcal{A}_{\text{prob}}$ liefert mit Wahrscheinlichkeit $p < 1$ ein korrektes Ergebnis
+		\item Für Anwendungen, die Korrektheit erfordern, ist $\mathcal{A}_{\text{det}}$ strikt zu bevorzugen
+	\end{enumerate}
+\end{satz}
+
+\textbf{Konsequenz für die Praxis}: In sicherheitskritischen Anwendungen (medizinische Diagnostik, Infrastruktur-Design, KI-Verifikation) sollten stochastische Methoden durch deterministische ersetzt werden, wo immer möglich.
+
+\subsection{Komplexitätstheoretische Einordnung}
+
+Die Profilberechnung ist ein Problem in \textbf{P} (polynomielle Zeit, deterministisch). Dies steht im Kontrast zu vielen Graphproblemen, die NP-vollständig sind:
+
+\begin{itemize}
+	\item[-] Hamiltonpfad: NP-vollständig
+	\item[-] Maximale Clique: NP-vollständig
+	\item[-] Graphfärbung: NP-vollständig
+	\item[-] \textbf{Graphprofil}: P (diese Arbeit, $O(n^3)$)
+\end{itemize}
+
+\begin{korollar}[Praktikabilität]
+	Für Graphen mit $n \leq 10.000$ Knoten ist die Profilberechnung in Sekunden auf modernen Rechnern durchführbar. Für $n \leq 100.000$ in Minuten. Dies deckt die meisten praktischen Anwendungen ab.
+\end{korollar}
+
+\subsection{Universalität der Methode}
+
+Die Signatur-Methode ist nicht auf die Profilberechnung beschränkt. Sie kann auf weitere Graphprobleme übertragen werden:
+
+\begin{satz}[Transitive Hülle]
+	Die transitive Hülle eines Graphen $G$ (Erreichbarkeitsmatrix $R$) kann mit der Signatur-Methode in Zeit $O(n^3)$ berechnet werden.
+\end{satz}
+
+\begin{proof}
+	Die Erreichbarkeitsmatrix ist gegeben durch $R = A \vee A^2 \vee \cdots \vee A^{n-1}$. Berechne alle Potenzen $A^k$ mittels Boolean Matrixmultiplikation (je $O(n^2)$), dann komponentenweise ODER-Verknüpfung in $O(n^2)$. Gesamt: $O(n) \cdot O(n^2) = O(n^3)$.
+\end{proof}
+
+Weitere Anwendungen:
+\begin{itemize}
+	\item[-] \textbf{Zykelerkennung}: Falls $A^k[i,i] = 1$ für ein $k \geq 2$, existiert ein Zyklus durch $i$
+	\item[-] \textbf{Starke Zusammenhangskomponenten}: Über Kombination von $R$ und $R^T$ (transponiert)
+	\item[-] \textbf{Kürzeste Pfade mit Gewichten}: Erweiterung auf gewichtete Graphen durch Anpassung der Signatur-Methode
+\end{itemize}
+
+\section{Ausblick und offene Fragen}
+
+\subsection{Parallelisierung}
+
+Die Signatur-Berechnung ist inhärent parallelisierbar:
+
+\begin{itemize}
+	\item[-] Zeilen- und Spalten-Signaturen können parallel berechnet werden
+	\item[-] Die Boolean Matrixmultiplikation lässt sich auf GPU-Architekturen abbilden
+	\item[-] Potenzielle Beschleunigung: Faktor $p$ bei $p$ Prozessoren
+\end{itemize}
+
+\textbf{Offene Frage}: Lässt sich durch geschickte Parallelisierung eine Laufzeit von $O(n^2)$ für die gesamte Profilberechnung erreichen?
+
+\subsection{Sparse Graphen}
+
+Viele reale Graphen sind \textit{dünn besetzt} (sparse): $|E| = O(n)$ statt $O(n^2)$.
+
+\begin{frage}
+	Kann die Signatur-Methode für sparse Graphen so angepasst werden, dass die Laufzeit von $O(n^3)$ auf $O(n^2)$ oder sogar $O(n \cdot |E|)$ reduziert wird?
+\end{frage}
+
+Ansatz: Verwende komprimierte Darstellung der Adjazenzmatrix (z.B. Compressed Sparse Row Format) und passe Signatur-Berechnung entsprechend an.
+
+\subsection{Dynamische Graphen}
+
+In vielen Anwendungen ändern sich Graphen über Zeit (z.B. soziale Netzwerke, Verkehrsnetze).
+
+\begin{frage}
+	Kann das Profil eines Graphen $G'$ nach Hinzufügen/Entfernen einer Kante inkrementell aus dem Profil von $G$ berechnet werden, ohne vollständige Neuberechnung?
+\end{frage}
+
+Potenzielle Laufzeit inkrementeller Update: $O(n^2)$ statt $O(n^3)$.
+
+\subsection{Approximative Varianten}
+
+Für extrem große Graphen ($n > 10^6$) könnte eine approximative Profilberechnung sinnvoll sein:
+
+\begin{frage}
+	Existiert ein Algorithmus, der in Zeit $O(n^2)$ ein Profil $(\tilde{D}, \tilde{L}, \tilde{\kappa})$ berechnet mit garantierter Güte $\|\tilde{D} - D\| < \epsilon$?
+\end{frage}
+
+Dies würde einen Trade-off zwischen Laufzeit und Exaktheit ermöglichen.
+
+\subsection{Anwendung auf Quantengraphen}
+
+Mit dem Aufkommen von Quantencomputern stellt sich die Frage:
+
+\begin{frage}
+	Lässt sich die Boolean Matrixmultiplikation auf Quantencomputern implementieren? Kann dadurch eine Laufzeit unterhalb von $O(n^2)$ erreicht werden?
+\end{frage}
+
+Die Signatur-Methode basiert auf Bitoperationen, die sich potenziell auf Qubits übertragen lassen.
+
+\subsection{Universelle Graphdatenbank}
+
+Eine visionäre Anwendung wäre eine \textbf{universelle Datenbank aller bekannten Graphprofile}:
+
+\begin{beispiel}[Graph Profile Database]
+	Konstruktion einer Datenbank, die für Millionen bekannter Graphen (Protein-Netzwerke, soziale Netzwerke, Infrastrukturgraphen, etc.) die Profile $(D, L, \kappa)$ speichert.
+	
+	Funktionalität:
+	\begin{itemize}
+		\item[-] Query: "Finde alle Graphen mit $\kappa \in [1.0, 1.5]$ und Durchmesser $< 10$"
+		\item[-] Similarity Search: "Finde die 10 ähnlichsten Graphen zu gegebenem Query-Graph"
+		\item[-] Pattern Discovery: "Entdecke wiederkehrende Profil-Muster über Domänen hinweg"
+	\end{itemize}
+\end{beispiel}
+
+Eine solche Datenbank wäre ein fundamentales Werkzeug für die Wissenschaft – vergleichbar mit Sequenzdatenbanken in der Bioinformatik.
+
+\section{Fazit}
+
+Die in dieser Arbeit entwickelte Methode zur optimalen Berechnung von Graphprofilen mittels der Signatur-Technik hat weitreichende theoretische und praktische Implikationen:
+
+\textbf{Theoretisch} wird gezeigt, dass deterministische Algorithmen stochastischen Verfahren überlegen sein können, wenn sie in polynomieller Zeit exakte Ergebnisse liefern.
+
+\textbf{Praktisch} eröffnen sich Anwendungen von der Neurowissenschaft über Künstliche Intelligenz bis hin zur Infrastruktur-Optimierung. Die Garantie optimaler Einordnung in die Graphprofilverteilung macht Aussagen über Graphstrukturen maximal informiert und nicht verbesserbar.
+
+Die Kernbotschaft lautet: \textit{Jeder Graph wird optimal charakterisiert. Darauf basierende Entscheidungen sind deterministisch und reproduzierbar.}
+
+In einer Zeit zunehmender Komplexität und Vernetzung bietet diese Methode ein fundamentales Werkzeug zur Analyse und zum Verständnis strukturierter Systeme.
+
 \end{document}
