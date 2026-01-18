@@ -8,11 +8,7 @@ from typing import Tuple, Dict
 import sys
 import os
 
-# Füge src zum Path hinzu für Imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-
 from boolean_matrix_multiplier import BooleanMatrixMultiplier
-
 
 class GraphProfileCalculator:
     """
@@ -51,41 +47,23 @@ class GraphProfileCalculator:
         L = np.zeros((n, n), dtype=int)
         np.fill_diagonal(D, 0)  # Distanz zu sich selbst ist 0
         
-        # Signatur-Vorberechnung für Adjazenzmatrix
-        row_sigs_A = [self.multiplier.compute_row_signature(adj_matrix[i, :]) 
-                      for i in range(n)]
-        col_sigs_A = [self.multiplier.compute_column_signature(adj_matrix[:, j]) 
-                      for j in range(n)]
-        
+        # WICHTIG: Starte mit k=1 und Current = A (nicht A^0)
         current = adj_matrix.copy()
-        curr_row_sigs = row_sigs_A.copy()
-        curr_col_sigs = col_sigs_A.copy()
         
         # Iterative Wegberechnung - O(n) Iterationen
         for k in range(1, n):
             for i in range(n):
                 for j in range(n):
-                    # Bitweise AND in O(1)
-                    and_result = self.multiplier.boolean_and_via_signature(
-                        curr_row_sigs[i], curr_col_sigs[j]
-                    )
-                    
-                    if self.multiplier.boolean_or_check(and_result):
+                    if current[i, j] == 1:
                         # Kürzester Weg: nur beim ersten Mal setzen
                         if D[i, j] == np.inf:
                             D[i, j] = k
                         
-                        # Längster Weg: immer aktualisieren
+                        # Längster Weg: immer aktualisieren (überschreiben)
                         L[i, j] = k
             
             # Nächste Potenz via Boolean Multiplikation - O(n²)
             current = self.multiplier.multiply_optimized(current, adj_matrix)
-            
-            # Signaturen aktualisieren
-            curr_row_sigs = [self.multiplier.compute_row_signature(current[i, :]) 
-                            for i in range(n)]
-            curr_col_sigs = [self.multiplier.compute_column_signature(current[:, j]) 
-                            for j in range(n)]
         
         return D, L, kappa
 

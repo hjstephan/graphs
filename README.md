@@ -34,6 +34,11 @@ graphs/
 
 ## Installation
 
+### Voraussetzungen
+
+- Python 3.8 oder höher
+- NumPy
+
 ### Installation
 
 ```bash
@@ -42,7 +47,7 @@ cd graphs
 
 # Virtuelle Umgebung erstellen (empfohlen)
 python -m venv venv
-source venv/bin/activate
+source venv/bin/activate  # Linux/Mac
 
 # Abhängigkeiten installieren
 pip install -e .
@@ -82,6 +87,7 @@ import numpy as np
 calculator = GraphProfileCalculator()
 
 # Adjazenzmatrix eines Graphen
+# Beispiel: Pfadgraph 0 -> 1 -> 2
 adj = np.array([[0, 1, 1],
                 [0, 0, 1],
                 [0, 0, 0]])
@@ -96,6 +102,7 @@ print(f"Längste Wege:\n{L}")
 # Statistiken abrufen
 stats = calculator.get_profile_statistics(D, L, kappa)
 print(f"Durchmesser: {stats['diameter']}")
+print(f"Maximaler längster Weg: {stats['max_longest_path']}")
 ```
 
 ## Tests ausführen
@@ -108,13 +115,14 @@ pytest
 pytest --cov=src --cov-report=html
 
 # Nur spezifische Tests
-pytest tests/test_bool_matrix_mult.py
+pytest tests/test_graph_profile.py
 
 # Verbose-Modus
 pytest -v
 
 # Coverage-Report öffnen
 open doc/coverage/index.html  # Mac/Linux
+start doc/coverage/index.html # Windows
 ```
 
 ## Experimente
@@ -145,6 +153,8 @@ Phase 2: Multiplikation
 - Gesamt: O(n²)
 ```
 
+**Kernidee**: Jede Zeile von A und jede Spalte von B wird als Bitkette kodiert. Die Multiplikation C[i,j] reduziert sich dann auf eine bitweise AND-Operation zwischen den Signaturen.
+
 ### Algorithmus 2: Kürzeste Wege (O(n³))
 
 ```
@@ -155,9 +165,20 @@ Für k = 1 bis n-1:
   Current = Current · A  (Boolean Multiplikation in O(n²))
 ```
 
+**Idee**: Current = A^k enthält genau die Wege der Länge k. Beim ersten Auftreten eines Weges wird die kürzeste Distanz gesetzt.
+
 ### Algorithmus 3: Vollständige Profilberechnung (O(n³))
 
 Berechnet gleichzeitig kürzeste Wege, längste Wege und Kantenmaß in O(n³) Gesamtzeit.
+
+```
+Für k = 1 bis n-1:
+  Für alle i,j:
+    Falls Current[i,j] = 1:
+      Falls D[i,j] = ∞: D[i,j] = k     (kürzester Weg)
+      L[i,j] = k                       (längster Weg, überschreiben)
+  Current = Current · A
+```
 
 ## Theoretische Grundlagen
 
@@ -166,7 +187,81 @@ Die Implementierung basiert auf folgenden Sätzen:
 **Satz (Wege und Matrixpotenzen):** 
 Für die k-te Potenz A^k der Adjazenzmatrix gilt: (A^k)[i,j] = 1 genau dann, wenn ein Weg der Länge k von i nach j existiert.
 
+**Beweis**: Durch Induktion über k. Für k=1 ist A¹ = A und enthält direkte Kanten. Für k+1 gilt: (A^(k+1))[i,j] = ⋁ₗ (A^k[i,l] ∧ A[l,j]). Dies ist genau dann 1, wenn es ein l gibt mit einem Weg der Länge k von i nach l und einer Kante von l nach j.
+
 **Satz (Laufzeit):**
 - Boolean Matrixmultiplikation mit Signaturen: O(n²)
 - Graphprofil-Berechnung: O(n³)
 - Speicherbedarf: O(n²)
+
+**Beweis**: Die n-1 Iterationen führen jeweils eine Boolean-Multiplikation in O(n²) durch und werten n² Einträge aus. Gesamt: O(n) · O(n²) = O(n³).
+
+## Beispiele
+
+### Pfadgraph
+
+```python
+# Pfadgraph: 0 -> 1 -> 2 -> 3
+adj = np.array([
+    [0, 1, 0, 0],
+    [0, 0, 1, 0],
+    [0, 0, 0, 1],
+    [0, 0, 0, 0]
+])
+
+D, L, kappa = calculator.compute_profile(adj)
+# D[0,3] = 3 (kürzester Weg: 0->1->2->3)
+# L[0,3] = 3 (längster Weg: gleich, da azyklisch)
+# kappa = 4/3 (4 Knoten, 3 Kanten)
+```
+
+### Vollständiger Graph
+
+```python
+# K₃: Jeder Knoten verbunden mit jedem
+adj = np.array([
+    [0, 1, 1],
+    [1, 0, 1],
+    [1, 1, 0]
+])
+
+D, L, kappa = calculator.compute_profile(adj)
+# Alle D[i,j] = 1 für i≠j (direkte Kanten)
+# kappa = 3/6 = 0.5 (3 Knoten, 6 Kanten)
+```
+
+### Zyklischer Graph
+
+```python
+# Zyklus: 0 -> 1 -> 2 -> 3 -> 0
+adj = np.array([
+    [0, 1, 0, 0],
+    [0, 0, 1, 0],
+    [0, 0, 0, 1],
+    [1, 0, 0, 0]
+])
+
+D, L, kappa = calculator.compute_profile(adj)
+# D[0,2] = 2 (kürzester Weg: 0->1->2)
+# L[0,2] = 3 (längster Weg: 0->3->2->1, bei gerichtetem Graph)
+```
+
+## Anwendungen
+
+Die effiziente Profilberechnung findet Anwendung in:
+
+- **Netzwerkanalyse**: Charakterisierung der Kommunikationsstruktur
+- **Graphklassifikation**: Einordnung von Graphen anhand struktureller Eigenschaften
+- **Algorithmenauswahl**: Wahl des optimalen Algorithmus basierend auf Grapheigenschaften
+- **Social Network Analysis**: Ermittlung von Distanzen und zentralen Knoten
+- **Routing-Algorithmen**: Berechnung kürzester und längster Pfade in Netzwerken
+
+## Ausblick
+
+Zukünftige Arbeiten können die Signatur-Technik auf weitere Graphprobleme übertragen:
+
+- **Transitive Hülle** in O(n³) statt O(n⁴)
+- **Zykelerkennung** durch Analyse der Diagonale von A^k
+- **Zusammenhangskomponenten** durch iterative Erreichbarkeitsanalyse
+- **Parallelisierung** der Signatur-Berechnung für Multicore-Systeme
+- **Sparse Graphen**: Optimierung für dünnbesetzte Adjazenzmatrizen
