@@ -35,7 +35,7 @@
 	frame=single
 }
 
-\title{Graphen}
+\title{Graphen mit Knoten und Kanten}
 \author{Stephan Epp}
 \date{\today}
 
@@ -140,17 +140,11 @@ In diesem Kapitel werden die Algorithmen zur Bestimmung der Profilwerte beschrie
 
 \subsection{Boolean Matrixmultiplikation}
 
-Der Kerngedanke für die Arbeitsweise des Algorithmus zur Boolean Matrixmultiplikation mit Signaturen ist:
-
-\begin{enumerate}
-	\item Kodiere jede \textbf{Zeile} von $A$ als Signatur
-	\item Kodiere jede \textbf{Spalte} von $B$ als Signatur
-	\item Für jedes Element $C_{ij}$:
-	\begin{itemize}
-		\item[-] Berechne bitweise UND der Signaturen: $\sigma(\text{row}_i(A)) \; \& \; \sigma(\text{col}_j(B))$
-		\item[-] Setze $C_{ij} = 1$ falls Ergebnis $\neq 0$, sonst $C_{ij} = 0$
-	\end{itemize}
-\end{enumerate}
+Der Kerngedanke für die Arbeitsweise des Algorithmus zur Boolean Matrixmultiplikation mit Signaturen ist, jede \textbf{Zeile} von $A$ als Signatur zu kodieren und jede \textbf{Spalte} von $B$ als Signatur zu kodieren und für jedes Element Element $C_{ij}$:
+\begin{itemize}
+	\item[-] Berechne bitweise UND der Signaturen: $\sigma(\text{row}_i(A)) \; \& \; \sigma(\text{col}_j(B))$
+	\item[-] Setze $C_{ij} = 1$ falls Ergebnis $\neq 0$, sonst $C_{ij} = 0$
+\end{itemize}
 
 Algorithmus \ref{alg:bmm} beschreibt die Arbeitsweise zur Boolean Matrixmultiplikation mit Signaturen.
 
@@ -223,10 +217,7 @@ Gesamtkomplexität: $O(n^2) + O(n^2) = O(n^2)$
 \end{proof}
 
 \subsection{Wegeberechnung}
-
 Die Berechnung des kürzesten Weges zwischen allen Knotenpaaren basiert auf der wiederholten Anwendung der Boolean Matrixmultiplikation.
-
-
 
 \begin{algorithm}[H]
 	\caption{Kürzeste Wege mit Boolean Matrixmultiplikation}
@@ -254,6 +245,18 @@ Die Berechnung des kürzesten Weges zwischen allen Knotenpaaren basiert auf der 
 	\end{algorithmic}
 \end{algorithm}
 
+\begin{satz}[Laufzeit mit Signatur-Methode]
+	Algorithmus \ref{alg:shortest-paths} berechnet alle kürzesten Wege in Zeit $O(n^3)$ unter Verwendung der Signatur-basierten Boolean Matrixmultiplikation.
+\end{satz}
+
+\begin{proof}
+	Der Algorithmus führt höchstens $n-1$ Iterationen durch. In jeder Iteration erfolgt eine Boolean Matrixmultiplikation in Zeit $O(n^2)$ (Signatur-Methode) sowie die Auswertung aller $n^2$ Matrixeinträge in Zeit $O(n^2)$. Damit ergibt sich:
+	\[
+	T(n) = O(n) \cdot (O(n^2) + O(n^2)) = O(n^3)
+	\]
+\end{proof}
+
+Die Bestimmung des längsten Weges in einem azyklischen Graphen kann ebenfalls durch Matrixpotenzen erfolgen.
 
 \begin{algorithm}[htb]
 	\caption{Längste Wege in azyklischen Graphen}
@@ -278,26 +281,24 @@ Die Berechnung des kürzesten Weges zwischen allen Knotenpaaren basiert auf der 
 	\end{algorithmic}
 \end{algorithm}
 
-\begin{satz}[Laufzeit mit Signatur-Methode]
-	Algorithmus \ref{alg:shortest-paths} berechnet alle kürzesten Wege in Zeit $O(n^3)$ unter Verwendung der Signatur-basierten Boolean Matrixmultiplikation.
-\end{satz}
-
-\begin{proof}
-	Der Algorithmus führt höchstens $n-1$ Iterationen durch. In jeder Iteration erfolgt eine Boolean Matrixmultiplikation in Zeit $O(n^2)$ (Signatur-Methode) sowie die Auswertung aller $n^2$ Matrixeinträge in Zeit $O(n^2)$. Damit ergibt sich:
-	\[
-	T(n) = O(n) \cdot (O(n^2) + O(n^2)) = O(n^3)
-	\]
-\end{proof}
-
-Die Bestimmung des längsten Weges in einem azyklischen Graphen kann ebenfalls durch Matrixpotenzen erfolgen.
-
 \begin{korollar}
 	Für azyklische Graphen kann das Profil (kürzeste und längste Wege) in Zeit $O(n^3)$ vollständig berechnet werden.
 \end{korollar}
 
 \subsection{Optimierte Profilberechnung}
-
 Durch geschickte Nutzung der Signatur-Methode lässt sich die Profilberechnung weiter optimieren.
+
+\begin{satz}[Effizienz der Profilberechnung]
+	Algorithmus \ref{alg:profile} berechnet das vollständige Profil eines Graphen in Zeit $O(n^3)$ mit $O(n^2)$ Speicher.
+\end{satz}
+
+\begin{proof}
+	Die Signatur-Berechnung erfolgt einmalig in $O(n^2)$. Die Hauptschleife iteriert $O(n)$ mal. In jeder Iteration werden $n^2$ Einträge geprüft (Zeit $O(n^2)$) und eine Boolean Matrixmultiplikation durchgeführt (Zeit $O(n^2)$ mit Signaturen). Damit gilt:
+	\begin{align}
+		T(n) = O(n^2) + O(n) \cdot (O(n^2) + O(n^2)) = O(n^3)
+	\end{align}
+	Der Speicherbedarf ist dominiert durch die Matrizen $D$, $L$ und die Signatur-Arrays, was insgesamt $O(n^2)$ ergibt.
+\end{proof}
 
 \begin{algorithm}[H]
 	\caption{Vollständige Profilberechnung}
@@ -332,18 +333,6 @@ Durch geschickte Nutzung der Signatur-Methode lässt sich die Profilberechnung w
 		\State \Return $(D, L, \kappa)$
 	\end{algorithmic}
 \end{algorithm}
-
-\begin{satz}[Effizienz der Profilberechnung]
-	Algorithmus \ref{alg:profile} berechnet das vollständige Profil eines Graphen in Zeit $O(n^3)$ mit $O(n^2)$ Speicher.
-\end{satz}
-
-\begin{proof}
-	Die Signatur-Berechnung erfolgt einmalig in $O(n^2)$. Die Hauptschleife iteriert $O(n)$ mal. In jeder Iteration werden $n^2$ Einträge geprüft (Zeit $O(n^2)$) und eine Boolean Matrixmultiplikation durchgeführt (Zeit $O(n^2)$ mit Signaturen). Damit gilt:
-	\[
-	T(n) = O(n^2) + O(n) \cdot (O(n^2) + O(n^2)) = O(n^3)
-	\]
-	Der Speicherbedarf ist dominiert durch die Matrizen $D$, $L$ und die Signatur-Arrays, was insgesamt $O(n^2)$ ergibt.
-\end{proof}
 
 \section{Implementierung}
 
