@@ -464,4 +464,4 @@ Vision: Datenbank mit Millionen bekannter Graphprofile
 
 ---
 
-**Kernbotschaft**: *Jeder Graph wird optimal charakterisiert. Darauf basierende Entscheidungen sind deterministisch und reproduzierbar.*
+**Kernbotschaft**: *Jeder Graph wird optimal mit Einordnung in die Graphprofilverteilung charakterisiert. Darauf basierende Entscheidungen sind deterministisch und reproduzierbar.*

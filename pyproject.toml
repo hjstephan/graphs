@@ -45,7 +45,7 @@ markers = [
 
 [tool.coverage.run]
 source = ["src"]
-omit = ["*/tests/*", "*/venv/*"]
+omit = ["*/tests/*", "*/venv/*", "src/brain_scale_graph_experiments.py"]
 
 [tool.coverage.report]
 exclude_lines = [
