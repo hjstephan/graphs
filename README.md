@@ -25,14 +25,16 @@ Dieses Projekt implementiert effiziente Algorithmen zur **optimalen** Berechnung
 ```
 graphs/
 ├── science/
-│   └── graphs.tex               # Wissenschaftliche Arbeit
+│   └── graphs.tex                          # Wissenschaftliche Arbeit
 ├── src/
-│   └── graph_profile.py         # Graphprofil-Berechnung
-├── tests/                       # Tests
+│   ├── results/                            # Ergebnisse der Experimente
+│   ├── graph_profile.py                    # Graphprofil-Berechnung
+│   └── brain_scale_graph_experiments.py    # Experimente
+├── tests/                                  # Tests
 │   ├── test_graph_profile.py
 │   └── test_integration.py
 ├── doc/
-│   └── coverage/                # Test-Coverage Report
+│   └── coverage/                           # Test-Coverage Report
 ├── pyproject.toml
 ├── pytest.ini
 └── README.md
