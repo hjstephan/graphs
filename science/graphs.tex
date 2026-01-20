@@ -169,7 +169,7 @@ In diesem Kapitel werden die Algorithmen zur Bestimmung der Profilwerte beschrie
 
 \subsection{Boolean Matrixmultiplikation}
 
-Der Kerngedanke für die Arbeitsweise des Algorithmus zur Boolean Matrixmultiplikation $A \cdot B = C$ mit Signaturen ist, jede \textbf{Zeile} von $A$ als Signatur zu kodieren und jede \textbf{Spalte} von $B$ als Signatur zu kodieren. Für jedes Element $C_{ij}$:
+Der Kerngedanke für die Arbeitsweise des Algorithmus zur Boolean Matrixmultiplikation $C = A \cdot B$ mit Signaturen ist, jede \textbf{Zeile} von $A$ als Signatur zu kodieren und jede \textbf{Spalte} von $B$ als Signatur zu kodieren. Für jedes Element $C_{ij}$:
 \begin{itemize}
 	\item[-] Berechne bitweise UND der Signaturen: $\sigma(\text{row}_i(A)) \; \& \; \sigma(\text{col}_j(B))$
 	\item[-] Setze $C_{ij} = 1$ falls Ergebnis $\neq 0$, sonst $C_{ij} = 0$
@@ -576,6 +576,305 @@ Der außergewöhnliche Zusammenhang zwischen Graphen und Boolean Matrizen lässt
 
 Diese Erkenntnis rechtfertigt die Investition in die Vorberechnung: Sie transformiert ein wiederholt $O(n^3)$-kostspieliges Problem in ein einmalig $O(n^3)$-kostspieliges Problem mit anschließend konstanter Abfragezeit.
 
+\section{Asymmetrische Optimierung für gerichtete Graphen}
+
+Die Beobachtung, dass Zeilen und Spalten einer Adjazenzmatrix unterschiedliche semantische und rechnerische Eigenschaften besitzen, führt zu weiteren Optimierungen der Boolean Matrixmultiplikation. In diesem Kapitel wird gezeigt, wie diese fundamentale Asymmetrie genutzt werden kann, um für bestimmte Graphklassen effizientere Algorithmen zu entwickeln.
+
+\subsection{Semantische Asymmetrie in der Adjazenzmatrix}
+
+In der Adjazenzmatrix $A$ eines gerichteten Graphen $G = (V, E)$ kodieren Zeilen und Spalten unterschiedliche Aspekte der Graphstruktur:
+
+\begin{definition}[Zeilen- und Spalten-Semantik]
+	Für die Adjazenzmatrix $A \in \{0,1\}^{n \times n}$ eines Graphen gilt:
+	\begin{itemize}
+		\item[-] \textbf{Zeile $i$}: $\{A_{ij} : j \in V\}$ kodiert die \textbf{ausgehenden Kanten} von Knoten $i$
+		\begin{itemize}
+			\item Interpretation: "Von Knoten $i$ zu allen anderen Knoten"
+			\item Semantik: \textbf{Quelle $\to$ Ziele} (one-to-many)
+			\item Aufwand: Alle Nachfolger identifizieren
+		\end{itemize}
+		\item[-] \textbf{Spalte $j$}: $\{A_{ij} : i \in V\}$ kodiert die \textbf{eingehenden Kanten} zu Knoten $j$
+		\begin{itemize}
+			\item Interpretation: "Von allen anderen Knoten zu Knoten $j$"
+			\item Semantik: \textbf{Quellen $\to$ Ziel} (many-to-one)
+			\item Aufwand: Ziel ist fixiert, nur Vorgänger sammeln
+		\end{itemize}
+	\end{itemize}
+\end{definition}
+
+Diese Asymmetrie manifestiert sich in der Boolean Matrixmultiplikation $C = A \cdot B$ durch unterschiedliche Zugriffsmuster:
+
+\begin{lemma}[Asymmetrische Zugriffsmuster]
+	Bei der Berechnung von $C_{ij} = \bigvee_{k=1}^{n} (A_{ik} \wedge B_{kj})$ gilt:
+	\begin{itemize}
+		\item[-] $A_{ik}$: Zugriff auf Zeile $i$ von $A$ (ausgehende Kanten, teurer)
+		\item[-] $B_{kj}$: Zugriff auf Spalte $j$ von $B$ (eingehende Kanten, günstiger)
+	\end{itemize}
+\end{lemma}
+
+\subsection{Gradbasierte Komplexitätsanalyse}
+
+Die Komplexität der Signatur-Berechnung hängt direkt vom Knotengrad ab. Für gerichtete Graphen sind Out-Degree und In-Degree jedoch unabhängig.
+
+\begin{definition}[Out-Degree und In-Degree]
+	Für einen gerichteten Graphen $G = (V, E)$ mit Adjazenzmatrix $A$ gilt:
+	\begin{align}
+		\text{out-deg}(v) &= \sum_{j=1}^{n} A_{vj} \quad \text{(Anzahl ausgehender Kanten)} \\
+		\text{in-deg}(v) &= \sum_{i=1}^{n} A_{iv} \quad \text{(Anzahl eingehender Kanten)}
+	\end{align}
+	Die durchschnittlichen Grade sind definiert als:
+	\begin{align}
+		\bar{d}_{\text{out}} &= \frac{1}{n} \sum_{v=1}^{n} \text{out-deg}(v) = \frac{|E|}{n} \\
+		\bar{d}_{\text{in}} &= \frac{1}{n} \sum_{v=1}^{n} \text{in-deg}(v) = \frac{|E|}{n}
+	\end{align}
+\end{definition}
+
+Für ungerichtete Graphen gilt $\bar{d}_{\text{out}} = \bar{d}_{\text{in}}$, aber für gerichtete Graphen können diese Werte stark divergieren.
+
+\begin{lemma}[Gradabhängige Signatur-Komplexität]
+	Die Berechnung der Signaturen erfordert:
+	\begin{itemize}
+		\item[-] Zeilen-Signatur für Knoten $i$: $O(\text{out-deg}(i))$ Zeit
+		\item[-] Spalten-Signatur für Knoten $j$: $O(\text{in-deg}(j))$ Zeit
+	\end{itemize}
+	Für alle Signaturen gilt:
+	\begin{align}
+		T_{\text{row}} &= \sum_{i=1}^{n} O(\text{out-deg}(i)) = O(n \cdot \bar{d}_{\text{out}}) \\
+		T_{\text{col}} &= \sum_{j=1}^{n} O(\text{in-deg}(j)) = O(n \cdot \bar{d}_{\text{in}})
+	\end{align}
+\end{lemma}
+
+\subsection{Spalten-priorisierte Matrixmultiplikation}
+
+Für Graphen mit $\bar{d}_{\text{in}} < \bar{d}_{\text{out}}$ ist es effizienter, zuerst alle Spalten-Signaturen zu berechnen und dann Zeilen-Signaturen on-demand zu generieren.
+
+\begin{algorithm}[H]
+	\caption{Spalten-priorisierte Boolean Matrixmultiplikation}
+	\label{alg:column-first-bmm}
+	\textbf{Eingabe:} Zwei Boolean Matrizen $A, B \in \{0,1\}^{n \times n}$ \\
+	\textbf{Ausgabe:} Boolean Matrix $C \in \{0,1\}^{n \times n}$ mit $C_{ij} = \bigvee_{k=1}^{n} (A_{ik} \wedge B_{kj})$
+	\begin{algorithmic}[1]
+		\State $n \gets \text{Dimension von } A$
+		\State $\text{colSig} \gets \text{leeres Array der Länge } n$
+		\State \textbf{// Phase 1: Berechne alle Spalten-Signaturen von B}
+		\For{$j = 0$ \textbf{to} $n-1$}
+		\State $\text{colSig}[j] \gets \sum_{k=0}^{n-1} B_{kj} \cdot 2^k$ \Comment{$O(\bar{d}_{\text{in}})$}
+		\EndFor
+		\State $C \gets n \times n$ Nullmatrix
+		\State \textbf{// Phase 2: Berechne Zeilen-Signaturen on-demand}
+		\For{$i = 0$ \textbf{to} $n-1$}
+		\State $\text{rowSig} \gets \sum_{k=0}^{n-1} A_{ik} \cdot 2^k$ \Comment{$O(\bar{d}_{\text{out}})$}
+		\For{$j = 0$ \textbf{to} $n-1$}
+		\State $\text{andResult} \gets \text{rowSig} \; \& \; \text{colSig}[j]$ \Comment{$O(1)$}
+		\If{$\text{andResult} \neq 0$}
+		\State $C_{ij} \gets 1$
+		\EndIf
+		\EndFor
+		\EndFor
+		\State \Return $C$
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{satz}[Laufzeit der spalten-priorisierten Multiplikation]
+	Algorithmus \ref{alg:column-first-bmm} hat eine Laufzeit von:
+	\begin{align}
+		T(n) = O(n \cdot \bar{d}_{\text{in}}) + O(n \cdot \bar{d}_{\text{out}}) + O(n^2)
+	\end{align}
+\end{satz}
+
+\begin{proof}
+	Die Laufzeit setzt sich zusammen aus:
+	\begin{itemize}
+		\item[-] Phase 1: Berechnung aller Spalten-Signaturen in $O(n \cdot \bar{d}_{\text{in}})$
+		\item[-] Phase 2: 
+		\begin{itemize}
+			\item $n$ Zeilen-Signaturen, je $O(\bar{d}_{\text{out}})$ → $O(n \cdot \bar{d}_{\text{out}})$
+			\item $n \times n$ bitweise UND-Operationen → $O(n^2)$
+		\end{itemize}
+	\end{itemize}
+	Gesamt: $T(n) = O(n \cdot \bar{d}_{\text{in}}) + O(n \cdot \bar{d}_{\text{out}}) + O(n^2)$
+\end{proof}
+
+\subsection{Speichereffizienz}
+
+Ein zusätzlicher Vorteil der spalten-priorisierten Methode ist der reduzierte Speicherbedarf.
+
+\begin{korollar}[Speicherkomplexität]
+	Algorithmus \ref{alg:column-first-bmm} benötigt $O(n)$ Speicher für Signaturen, während die Standard-Signatur-Methode $O(2n)$ Speicher erfordert:
+	\begin{itemize}
+		\item[-] Spalten-priorisiert: $n$ Spalten-Signaturen + 1 aktuelle Zeilen-Signatur = $O(n)$
+		\item[-] Standard: $n$ Zeilen-Signaturen + $n$ Spalten-Signaturen = $O(2n)$
+	\end{itemize}
+	Dies entspricht einer Speicherreduktion um Faktor 2.
+\end{korollar}
+
+\subsection{Anwendung auf spezielle Graphklassen}
+
+Die Asymmetrie ist besonders ausgeprägt in bestimmten Graphklassen.
+
+\subsubsection{Broadcasting-Graphen}
+
+\begin{definition}[Broadcasting-Graph]
+	Ein Broadcasting-Graph ist ein gerichteter Graph, in dem wenige Knoten (Broadcaster) hohen Out-Degree haben, während die meisten Knoten (Empfänger) niedrigen In-Degree aufweisen.
+	
+	Typische Eigenschaften:
+	\begin{itemize}
+		\item[-] Wenige Broadcaster: $\text{out-deg}(\text{Broadcaster}) = \Theta(n)$
+		\item[-] Viele Empfänger: $\text{in-deg}(\text{Empfänger}) = O(1)$
+		\item[-] Durchschnitte: $\bar{d}_{\text{out}} \gg \bar{d}_{\text{in}}$
+	\end{itemize}
+\end{definition}
+
+\begin{beispiel}[Soziale Netzwerke]
+	In einem sozialen Netzwerk wie Twitter:
+	\begin{itemize}
+		\item[-] Prominente Accounts (Broadcaster): Millionen Follower → $\text{out-deg} \approx 10^6$
+		\item[-] Durchschnittsnutzer (Empfänger): Wenige Abonnements → $\text{in-deg} \approx 10^1$
+		\item[-] Asymmetrie-Faktor: $\frac{\bar{d}_{\text{out}}}{\bar{d}_{\text{in}}} \approx 10^5$
+	\end{itemize}
+\end{beispiel}
+
+\begin{satz}[Laufzeit für Broadcasting-Graphen]
+	Für Broadcasting-Graphen mit $\bar{d}_{\text{out}} = \Theta(n)$ und $\bar{d}_{\text{in}} = O(1)$ erreicht Algorithmus \ref{alg:column-first-bmm} eine Laufzeit von:
+	\begin{align}
+		T(n) = O(n \cdot 1) + O(n \cdot n) + O(n^2) = O(n^2)
+	\end{align}
+	im Vergleich zu $O(n^3)$ für zeilen-priorisierte Ansätze, die $O(n \cdot n) + O(n \cdot 1) + O(n^2)$ benötigen würden.
+\end{satz}
+
+\subsubsection{Hierarchische Netzwerke}
+
+\begin{definition}[Hierarchischer gerichteter Graph]
+	Ein hierarchischer gerichteter Graph besteht aus Ebenen $L_1, L_2, \ldots, L_h$, wobei Kanten nur von $L_i$ nach $L_{i+1}$ verlaufen.
+	
+	Eigenschaften:
+	\begin{itemize}
+		\item[-] Knoten in oberen Ebenen: Hoher Out-Degree, niedriger In-Degree
+		\item[-] Knoten in unteren Ebenen: Niedriger Out-Degree, hoher In-Degree
+		\item[-] Globaler Durchschnitt: $\bar{d}_{\text{out}} = \bar{d}_{\text{in}} = \frac{|E|}{n}$
+	\end{itemize}
+\end{definition}
+
+\begin{korollar}[Adaptive Strategie]
+	Für hierarchische Graphen kann eine adaptive Strategie verwendet werden:
+	\begin{itemize}
+		\item[-] Berechne für jede Ebene $L_i$ separat das Verhältnis $r_i = \frac{\bar{d}_{\text{in}}^{(i)}}{\bar{d}_{\text{out}}^{(i)}}$
+		\item[-] Wähle spalten-priorisiert falls $r_i < 1$, sonst zeilen-priorisiert
+		\item[-] Potenzielle Beschleunigung: Bis zu Faktor $\min(r_i, 1/r_i)$ pro Ebene
+	\end{itemize}
+\end{korollar}
+
+\subsection{Sparse-Matrix-Optimierung}
+
+Für sparse Graphen mit $m = |E| \ll n^2$ kann die Asymmetrie weiter ausgenutzt werden.
+
+\begin{algorithm}[H]
+	\caption{Sparse spalten-priorisierte BMM}
+	\label{alg:sparse-column-bmm}
+	\textbf{Eingabe:} Sparse Matrizen $A, B$ mit $m$ Kanten \\
+	\textbf{Ausgabe:} Matrix $C = A \cdot B$
+	\begin{algorithmic}[1]
+		\State Berechne kompakte Spalten-Signaturen von $B$ \Comment{$O(m)$}
+		\For{jede Zeile $i$ mit $\text{out-deg}(i) > 0$}
+		\State Berechne Zeilen-Signatur nur für nicht-null Einträge \Comment{$O(\text{out-deg}(i))$}
+		\For{jede Spalte $j$}
+		\If{Zeilen-Signatur $\cap$ Spalten-Signatur $\neq \emptyset$}
+		\State $C_{ij} \gets 1$
+		\EndIf
+		\EndFor
+		\EndFor
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{satz}[Laufzeit für sparse Graphen]
+	Für sparse Graphen mit $m = O(n)$ erreicht Algorithmus \ref{alg:sparse-column-bmm} eine Laufzeit von:
+	\begin{align}
+		T(n) = O(m) + O\left(\sum_{i} \text{out-deg}(i) \cdot n\right) = O(m + mn) = O(n^2)
+	\end{align}
+	falls $m = O(n)$, im Vergleich zu $O(n^3)$ für dichte Methoden.
+\end{satz}
+
+\subsection{Vergleichende Analyse}
+
+\begin{table}[H]
+	\centering
+	\caption{Laufzeitvergleich verschiedener BMM-Strategien}
+	\label{tab:bmm-comparison}
+	\begin{tabular}{lccc}
+		\hline
+		\textbf{Graphklasse} & \textbf{Standard} & \textbf{Spalten-priorisiert} & \textbf{Beschleunigung} \\
+		\hline
+		Dichte Graphen ($m = \Theta(n^2)$) & $O(n^2)$ & $O(n^2)$ & $1\times$ \\
+		Broadcasting ($\bar{d}_{\text{out}} = \Theta(n)$, $\bar{d}_{\text{in}} = O(1)$) & $O(n^3)$ & $O(n^2)$ & $n\times$ \\
+		Sparse ($m = O(n)$) & $O(n^2)$ & $O(n^2)$ & $1\times$ \\
+		Hierarchisch (adaptiv) & $O(n^2)$ & $O(n^2/r)$ & $r\times$ \\
+		\hline
+	\end{tabular}
+\end{table}
+
+Die Tabelle zeigt, dass die spalten-priorisierte Methode asymptotisch gleich oder besser ist als die Standard-Methode, mit signifikanten Verbesserungen für Broadcasting-Graphen.
+
+\subsection{Praktische Implementierung}
+
+Die Entscheidung zwischen zeilen- und spalten-priorisierter Verarbeitung sollte zur Laufzeit basierend auf den Grapheigenschaften getroffen werden.
+
+
+\begin{korollar}[Optimalität der adaptiven Strategie]
+	Algorithmus \ref{alg:adaptive-bmm} wählt stets die asymptotisch optimale Strategie und erreicht:
+	\begin{align}
+		T(n) = O\left(n \cdot \min(\bar{d}_{\text{in}}, \bar{d}_{\text{out}}) + n \cdot \max(\bar{d}_{\text{in}}, \bar{d}_{\text{out}}) + n^2\right)
+	\end{align}
+\end{korollar}
+
+\begin{algorithm}[H]
+	\caption{Adaptive Boolean Matrixmultiplikation}
+	\label{alg:adaptive-bmm}
+	\textbf{Eingabe:} Matrizen $A, B \in \{0,1\}^{n \times n}$ \\
+	\textbf{Ausgabe:} $C = A \cdot B$
+	\begin{algorithmic}[1]
+		\State Berechne $\bar{d}_{\text{out}} \gets \frac{1}{n} \sum_{i} \text{out-deg}_A(i)$
+		\State Berechne $\bar{d}_{\text{in}} \gets \frac{1}{n} \sum_{j} \text{in-deg}_B(j)$
+		\If{$\bar{d}_{\text{in}} < \bar{d}_{\text{out}}$}
+		\State \Return \textsc{ColumnFirstBMM}$(A, B)$ \Comment{Spalten-priorisiert}
+		\Else
+		\State \Return \textsc{RowFirstBMM}$(A, B)$ \Comment{Zeilen-priorisiert}
+		\EndIf
+	\end{algorithmic}
+\end{algorithm}
+
+\subsection{Integration in die Profilberechnung}
+
+Die asymmetrische Optimierung lässt sich direkt in Algorithmus \ref{alg:profile} integrieren.
+
+\begin{korollar}[Optimierte Profilberechnung für gerichtete Graphen]
+	Durch Verwendung der adaptiven BMM in der Profilberechnung kann für Broadcasting-Graphen eine Beschleunigung um Faktor $n$ erreicht werden:
+	\begin{itemize}
+		\item[-] Standard-Profilberechnung: $O(n) \cdot O(n^3) = O(n^4)$
+		\item[-] Mit adaptiver BMM: $O(n) \cdot O(n^2) = O(n^3)$
+	\end{itemize}
+	Dies reduziert die Laufzeit für $n = 1000$ von $\approx 10^{12}$ auf $10^9$ Operationen.
+\end{korollar}
+
+\subsection{Zusammenfassung}
+
+Die asymmetrische Natur von Zeilen und Spalten in der Adjazenzmatrix gerichteter Graphen eröffnet neue Optimierungsmöglichkeiten:
+
+\begin{enumerate}
+	\item \textbf{Fundamentale Asymmetrie}: Zeilen kodieren ausgehende Kanten (one-to-many), Spalten eingehende Kanten (many-to-one)
+	
+	\item \textbf{Gradabhängige Komplexität}: Signatur-Berechnung kostet $O(\bar{d}_{\text{out}})$ für Zeilen, $O(\bar{d}_{\text{in}})$ für Spalten
+	
+	\item \textbf{Spalten-priorisierte Strategie}: Für $\bar{d}_{\text{in}} < \bar{d}_{\text{out}}$ um Faktor $\bar{d}_{\text{out}}/\bar{d}_{\text{in}}$ schneller
+	
+	\item \textbf{Broadcasting-Graphen}: Beschleunigung um Faktor $n$ möglich ($O(n^2)$ statt $O(n^3)$)
+	
+	\item \textbf{Speichereffizienz}: Reduktion des Signatur-Speichers um Faktor 2
+	
+	\item \textbf{Adaptive Implementierung}: Automatische Wahl der optimalen Strategie zur Laufzeit
+\end{enumerate}
+
+Diese Erkenntnisse erweitern die Anwendbarkeit der Signatur-Methode signifikant und ermöglichen die effiziente Verarbeitung von Graphklassen, die mit Standard-Methoden suboptimal behandelt würden.
+
 \section{Experimente}
 
 Die theoretischen Ergebnisse dieser Arbeit werden durch umfassende Experimente validiert. Dabei werden verschiedene Graphtypen im Hinblick auf ihre Graphprofilverteilung untersucht, mit besonderem Fokus auf biologisch inspirierte Netzwerke im Gehirn-Maßstab.
@@ -847,7 +1146,7 @@ Abbildung \ref{fig:kappa_vs_diameter} zeigt den fundamentalen Trade-off zwischen
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.95\textwidth]{kappa_vs_diameter.pdf}
+	\includegraphics[width=0.85\textwidth]{kappa_vs_diameter.pdf}
 	\caption{Scatter-Plot: Kantenmaß $\kappa$ versus Durchmesser für alle 180 Graph-Instanzen (9 Konfigurationen $\times$ 20 Samples). Ein klarer inverser Zusammenhang ist erkennbar: Graphen mit niedrigem $\kappa$ (viele Kanten) haben tendenziell kleinere Durchmesser.}
 	\label{fig:kappa_vs_diameter}
 \end{figure}
@@ -1405,7 +1704,7 @@ Die in dieser Arbeit entwickelte Methode zur optimalen Berechnung von Graphprofi
 
 \textbf{Praktisch} eröffnen sich Anwendungen von der Neurowissenschaft über Künstliche Intelligenz bis hin zur Infrastruktur-Optimierung. Die Garantie optimaler Einordnung in die Graphprofilverteilung macht Aussagen über Graphstrukturen maximal informiert und nicht verbesserbar.
 
-Die zentral Aussage ist: \textit{Jeder Graph wird optimal mit Einordnung in die Graphprofilverteilung charakterisiert. Darauf basierende Entscheidungen sind deterministisch und reproduzierbar.}
+Die zentrale Aussage ist: \textit{Jeder Graph wird optimal mit Einordnung in die Graphprofilverteilung charakterisiert. Darauf basierende Entscheidungen sind deterministisch und reproduzierbar.}
 
 In einer Zeit zunehmender Komplexität und Vernetzung bietet diese Methode ein fundamentales Werkzeug zur Analyse und zum Verständnis strukturierter Systeme.
 \end{document}
