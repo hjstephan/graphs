@@ -79,7 +79,7 @@ Die Arbeit ist wie folgt strukturiert: \textbf{Kapitel 2} führt die notwendigen
 
 \textbf{Kapitel 8} diskutiert theoretische Implikationen: die Überlegenheit deterministischer Verfahren für sicherheitskritische Anwendungen, die komplexitätstheoretische Einordnung in P, und die Universalität der Signatur-Methode für weitere Graphprobleme.
 
-\textbf{Kapitel 9} fasst die zentralen Ergebnisse zusammen und gibt einen Ausblick auf offene Forschungsfragen: Parallelisierung, Approximationsalgorithmen für extrem große Graphen, Quantenalgorithmen und die Konstruktion einer öffentlichen Graphprofil-Datenbank.
+\textbf{Kapitel 9} fasst die zentralen Ergebnisse zusammen und gibt einen Ausblick auf offene Forschungsfragen: Parallelisierung, Approximationsalgorithmen für extrem große Graphen und die Konstruktion einer öffentlichen Graphprofil-Datenbank.
 
 \textbf{Kapitel 10} schließt die Arbeit mit einem Fazit ab und betont die Kernbotschaft: Jeder Graph wird optimal in die Graphprofilverteilung eingeordnet, und darauf basierende Entscheidungen sind deterministisch und reproduzierbar.
 
@@ -128,7 +128,7 @@ In diesem Kapitel werden die Definitionen für diese Arbeit eingeführt.
 	\end{itemize}
 \end{definition}
 
-Mit diesem Profil wird eine Verteilung definiert, in die sich alle Graphen einordnen lassen. Ausschlaggebend für die unterschiedlichen Bereiche in der Verteilung ist die erforderliche Laufzeit der Algorithmen zur Ermittlung aller Profilwerte. Natürlich ist es dafür nötig, dass die Algorithmen die Profilwerte in optimaler Laufzeit berechnen. Sonst wäre die Einordnung nicht klar.
+Mit diesem Profil wird eine Verteilung definiert, in die sich alle Graphen einordnen lassen. Natürlich ist es dafür nötig, dass die Algorithmen die Profilwerte in optimaler Laufzeit berechnen. Sonst wäre die Einordnung nicht klar.
 
 \begin{definition}[Erreichbarkeitsmatrix]
 	Die Erreichbarkeitsmatrix $R \in \{0,1\}^{n \times n}$ eines Graphen $G$ ist definiert als:
@@ -169,7 +169,7 @@ In diesem Kapitel werden die Algorithmen zur Bestimmung der Profilwerte beschrie
 
 \subsection{Boolean Matrixmultiplikation}
 
-Der Kerngedanke für die Arbeitsweise des Algorithmus zur Boolean Matrixmultiplikation mit Signaturen ist, jede \textbf{Zeile} von $A$ als Signatur zu kodieren und jede \textbf{Spalte} von $B$ als Signatur zu kodieren und für jedes Element Element $C_{ij}$:
+Der Kerngedanke für die Arbeitsweise des Algorithmus zur Boolean Matrixmultiplikation $A \cdot B = C$ mit Signaturen ist, jede \textbf{Zeile} von $A$ als Signatur zu kodieren und jede \textbf{Spalte} von $B$ als Signatur zu kodieren. Für jedes Element $C_{ij}$:
 \begin{itemize}
 	\item[-] Berechne bitweise UND der Signaturen: $\sigma(\text{row}_i(A)) \; \& \; \sigma(\text{col}_j(B))$
 	\item[-] Setze $C_{ij} = 1$ falls Ergebnis $\neq 0$, sonst $C_{ij} = 0$
@@ -253,7 +253,7 @@ Die Berechnung des kürzesten Weges zwischen allen Knotenpaaren basiert auf der 
 \end{satz}
 
 \begin{proof}
-	Der Algorithmus führt höchstens $n-1$ Iterationen durch. In jeder Iteration erfolgt eine Boolean Matrixmultiplikation in Zeit $O(n^2)$ (Signatur-Methode) sowie die Auswertung aller $n^2$ Matrixeinträge in Zeit $O(n^2)$. Damit ergibt sich:
+	Der Algorithmus führt höchstens $n-1$ Iterationen durch. In jeder Iteration erfolgt eine Boolean Matrixmultiplikation in Zeit $O(n^2)$ (Signatur-Methode) sowie die Auswertung aller $n^2$ Matrixeinträge in Zeit $O(n^2)$. Damit ergibt sich $T(n)$ für Algorithmus \ref{alg:shortest-paths} zu
 	\[
 	T(n) = O(n) \cdot (O(n^2) + O(n^2)) = O(n^3)
 	\]
@@ -322,7 +322,7 @@ Durch geschickte Nutzung der Signatur-Methode lässt sich die Profilberechnung w
 \end{satz}
 
 \begin{proof}
-	Die Signatur-Berechnung erfolgt einmalig in $O(n^2)$. Die Hauptschleife iteriert $O(n)$ mal. In jeder Iteration werden $n^2$ Einträge geprüft (Zeit $O(n^2)$) und eine Boolean Matrixmultiplikation durchgeführt (Zeit $O(n^2)$ mit Signaturen). Damit gilt:
+	Die Signatur-Berechnung erfolgt einmalig in $O(n^2)$. Die Hauptschleife iteriert $O(n)$ mal. In jeder Iteration werden $n^2$ Einträge geprüft und eine Boolean Matrixmultiplikation durchgeführt (Zeit $O(n^2)$ mit Signaturen). Damit gilt:
 	\begin{align}
 		T(n) = O(n^2) + O(n) \cdot (O(n^2) + O(n^2)) = O(n^3)
 	\end{align}
@@ -428,12 +428,12 @@ Für alle Graphtypen lässt sich durch die Signatur-Methode konsistent in $O(n^3
 
 \section{Zusammenhang: Graphen und Boolean Matrizen}
 
-Die Beziehung zwischen Graphentheorie und Boolean Algebra ist tiefer als zunächst erkennbar. In diesem Kapitel wird gezeigt, wie die wiederholte Boolean Matrixmultiplikation nicht nur ein Berechnungswerkzeug ist, sondern eine fundamentale strukturelle Eigenschaft von Graphen offenlegt.
+Die Beziehung zwischen Graphentheorie und Boolean Algebra ist tiefer als zunächst erkennbar. In diesem Kapitel wird gezeigt, wie die wiederholte Boolean Matrixmultiplikation die fundamentale strukturelle Eigenschaft von Graphen nutzt.
 
 \begin{satz}[Strukturelle Äquivalenz]
 	Sei $G = (V,E)$ ein Graph mit Adjazenzmatrix $A \in \{0,1\}^{n \times n}$. Dann kodiert die $k$-te Potenz $A^k$ (unter Boolean Matrixmultiplikation) voll\-ständig die Existenz aller Wege der Länge $k$ in $G$:
 	\begin{align}
-		(A^k)_{ij} = 1 \Leftrightarrow \exists \text{ Weg der Länge } k \text{ von } i \text{ nach } j \text{ mit exakt } k-1 \text{ Zwischenknoten}
+		(A^k)_{ij} = 1 \Leftrightarrow \text{ Es gibt einen Weg } \text{von } i \text{ nach } j \text{ mit exakt } k-1 \text{ Zwischenknoten}
 	\end{align}
 \end{satz}
 
@@ -468,7 +468,7 @@ Der Berechnungsprozess hat eine natürliche induktive Struktur:
 	Dies bedeutet: Die Kenntnis aller Wege der Länge $k$ ermöglicht die direkte Berechnung aller Wege der Länge $k+1$.
 \end{korollar}
 
-\textbf{Wichtige Implikation}: Man muss nicht $k$ separate Multiplikationen $A \cdot A \cdot \ldots \cdot A$ durchführen, sondern kann iterativ vorgehen:
+Es ist nicht nötig, $k$ separate Multiplikationen $A \cdot A \cdot \ldots \cdot A$ durchführen, sondern kann iterativ vorgehen:
 \begin{align*}
 	A^1 &= A \\
 	A^2 &= A^1 \cdot A \\
@@ -482,7 +482,7 @@ Dies reduziert den Berechnungsaufwand von potenziell $O(k)$ Multiplikationen pro
 \begin{satz}[Vermeidung redundanter Berechnungen]
 	Sei $A^k$ bereits berechnet. Dann kann die Existenz eines Weges der Länge $k$ zwischen zwei Knoten $i$ und $j$ \textbf{ohne erneute Multiplikation} durch Nachschlagen in $A^k$ bestimmt werden:
 	\begin{align}
-		\text{Es gibt einen Weg der Länge } k \text{ von } i \text{ nach } j \quad \Leftrightarrow \quad (A^k)_{ij} = 1
+		(A^k)_{ij} = 1 \quad \Leftrightarrow \quad \text{Es gibt einen Weg der Länge } k \text{ von } i \text{ nach } j
 	\end{align}
 \end{satz}
 
@@ -495,7 +495,7 @@ Dies ist die Kernidee in der Anwendung des Subgraph Algorithmus: Vorberechnung u
 	\end{align}
 \end{satz}
 
-\textbf{Wichtig}: Die initiale Investition von $O(n^3)$ ermöglicht dann beliebig viele Abfragen in $O(1)$. Dies ermöglicht eine effiziente Art der Matrixmultiplikation:
+Die initiale Investition von $O(n^3)$ ermöglicht dann beliebig viele Abfragen in $O(1)$. Dies ermöglicht eine effiziente Art der Matrixmultiplikation:
 
 \begin{itemize}
 	\item[-] \textbf{Ohne Vorberechnung}: Jede Abfrage, ob ein Weg der Länge $k$ existiert erfordert $O(n^3)$ Zeit (Berechnung von $A^k$)
@@ -659,7 +659,7 @@ Unter Annahme der gemessenen Skalierung lässt sich die theoretische Laufzeit f�
 \end{table}
 
 \begin{beispiel}[Praktische Unmöglichkeit]
-	Die extrapolierte Laufzeit von ca. $10^{21}$ Jahren überschreitet das Alter des Universums ($\approx 1.4 \times 10^{10}$ Jahre) um einen Faktor von $10^{11}$. Dies unterstreicht die Notwendigkeit von:
+	Die extrapolierte Laufzeit von ca. $10^{21}$ Jahren überschreitet ein angenommenes Alter des Universums ($\approx 1.4 \times 10^{10}$ Jahre) um einen Faktor von $10^{11}$. Dies unterstreicht die Notwendigkeit von:
 	\begin{itemize}
 		\item[-] Massiver Parallelisierung (Faktor $10^6$ würde Laufzeit auf $10^{15}$ Jahre reduzieren)
 		\item[-] Hierarchischer Dekomposition (Analyse von Subgraphen)
@@ -684,7 +684,7 @@ Für jede Graph-Konfiguration wurden 20 unabhängige Instanzen mit $n = 100$ Kno
 
 \begin{table}[H]
 	\centering
-	\caption{Graphprofilverteilung: Mittelwert und Standardabweichung von $\kappa$ und Durchmesser}
+	\caption{Graphprofilverteilung: Mittelwert, Standardabweichung und Durchmesser}
 	\label{tab:distribution}
 	\small
 	\begin{tabular}{lcccc}
@@ -898,7 +898,7 @@ Die in dieser Arbeit entwickelten Algorithmen ermöglichen nicht nur die effizie
 \subsection{Optimalität der Einordnung}
 
 \begin{satz}[Optimale Charakterisierung]
-	Die durch Algorithmus \ref{alg:profile} berechnete Einordnung eines Graphen $G$ in die Graphprofilverteilung mittels des Tripels $(D, L, \kappa)$ ist optimal und nicht verbesserbar.
+	Die durch Algorithmus \ref{alg:profile} berechnete Einordnung eines Graphen $G$ in die Graphprofilverteilung mittels des Tripels $(D, L, \kappa)$ ist optimal.
 \end{satz}
 
 \begin{proof}
@@ -1012,7 +1012,7 @@ Tiefe neuronale Netze lassen sich als gerichtete Graphen modellieren, wobei Neur
 \begin{algorithm}[H]
 	\caption{Profilbasierte Neural Architecture Search}
 	\label{alg:nas}
-	\textbf{Eingabe:} Menge von Kandidaten-Architekturen $\mathcal{A} = \{A_1, \ldots, A_k\}$, Ziel-Profil $(D_{\text{target}}, L_{\text{target}}, \kappa_{\text{target}})$ \\
+	\textbf{Eingabe:} Kandidaten-Architekturen $\mathcal{A} = \{A_1, \ldots, A_k\}$, Ziel-Profil $(D_{\text{target}}, L_{\text{target}}, \kappa_{\text{target}})$ \\
 	\textbf{Ausgabe:} Optimale Architektur $A^*$
 	\begin{algorithmic}[1]
 		\For{jede Architektur $A_i \in \mathcal{A}$}
@@ -1063,7 +1063,6 @@ Die Topologie eines Rechenzentrums bestimmt dessen Leistungsfähigkeit. Die Prof
 		\item[-] Fehlertoleranz: Bei Ausfall eines Switches darf Durchmesser höchstens um Faktor 2 wachsen
 		\item[-] Kosteneffizienz: Minimiere Anzahl Switches (maximiere $\kappa$)
 	\end{itemize}
-	
 	Algorithmus:
 	\begin{enumerate}
 		\item Generiere Kandidaten-Topologien $T_1, \ldots, T_m$
@@ -1315,7 +1314,7 @@ Die Signatur-Methode ist nicht auf Graphprofile beschränkt. Potenzielle Erweite
 	\item[-] \textbf{Temporale Graphen}: Integration der Zeitdimension in die Profilberechnung
 \end{itemize}
 
-Die fundamentale Erkenntnis – dass endliche diskrete Strukturen durch Potenzoperationen vollständig charakterisiert werden können – könnte auf weitere mathematische Objekte übertragen werden.
+Das Ergebnis, dass endliche diskrete Strukturen durch Potenzoperationen vollständig charakterisiert werden können, kann auf weitere mathematische Objekte übertragen werden.
 
 \section{Fazit}
 
@@ -1406,7 +1405,7 @@ Die in dieser Arbeit entwickelte Methode zur optimalen Berechnung von Graphprofi
 
 \textbf{Praktisch} eröffnen sich Anwendungen von der Neurowissenschaft über Künstliche Intelligenz bis hin zur Infrastruktur-Optimierung. Die Garantie optimaler Einordnung in die Graphprofilverteilung macht Aussagen über Graphstrukturen maximal informiert und nicht verbesserbar.
 
-Die Kernbotschaft lautet: \textit{Jeder Graph wird optimal mit Einordnung in die Graphprofilverteilung charakterisiert. Darauf basierende Entscheidungen sind deterministisch und reproduzierbar.}
+Die zentral Aussage ist: \textit{Jeder Graph wird optimal mit Einordnung in die Graphprofilverteilung charakterisiert. Darauf basierende Entscheidungen sind deterministisch und reproduzierbar.}
 
 In einer Zeit zunehmender Komplexität und Vernetzung bietet diese Methode ein fundamentales Werkzeug zur Analyse und zum Verständnis strukturierter Systeme.
 \end{document}
