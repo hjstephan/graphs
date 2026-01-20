@@ -55,6 +55,34 @@ In der Komplexitätstheorie betrachtet man das Rechenmodell der Turingmaschine. 
 
 Die Berechnung von Profilwerten für Graphen erfordert effiziente Algorithmen zur Bestimmung von Wegeigenschaften. In dieser Arbeit wird gezeigt, wie die Signatur-Methode aus der Boolean Matrixmultiplikation zur effizienten Berechnung dieser Profilwerte eingesetzt werden kann.
 
+Graphen sind fundamentale Strukturen zur Modellierung komplexer Systeme. Von neuronalen Netzwerken im Gehirn über soziale Netzwerke bis hin zu Kommunikationsinfrastrukturen lassen sich zahlreiche reale Phänomene als Graphen darstellen. Die zentrale Frage dabei ist: Wie lassen sich strukturelle Eigenschaften dieser Graphen systematisch erfassen und vergleichen?
+
+Das \textbf{Graphprofil}, bestehend aus kürzesten Wegen, längsten Wegen und dem Kantenmaß $\kappa = \frac{|V|}{|E|}$, bietet eine kompakte Charakterisierung der Wegestruktur eines Graphen. Diese drei Kenngrößen ermöglichen es, Graphen in eine mehrdimensionale Verteilung einzuordnen und strukturell zu vergleichen. Die Herausforderung besteht darin, diese Profile effizient und vor allem \textbf{optimal} zu berechnen.
+
+Die Berechnung kürzester Wege in Graphen ist ein klassisches Problem der Informatik. Algorithmen wie \textsc{Floyd-Warshall} (1962) oder \textsc{Johnson} (1977) berechnen kürzeste Wege zwischen allen Knotenpaaren in Zeit $O(n^3)$ beziehungsweise $O(n^2 \log n + nm)$ für Graphen mit $n$ Knoten und $m$ Kanten.
+
+Für \textbf{Boolean Matrizen} – Matrizen mit Einträgen aus $\{0,1\}$ und logischen Operationen statt arithmetischer – sind spezialisierte Methoden bekannt. Die naive Boolean Matrixmultiplikation hat Laufzeit $O(n^3)$. Fortgeschrittene algebraische Methoden wie \textsc{Strassen} (1969) oder \textsc{Coppersmith-Winograd} (1990) erreichen $O(n^{2.807})$ bzw. $O(n^{2.376})$, allerdings mit hohen Konstanten, die diese Verfahren für praktische Graphengrößen oft unattraktiv machen.
+
+Die \textbf{Signatur-Methode}, ursprünglich entwickelt im Kontext des Subgraph-Matching-Problems, kodiert Zeilen und Spalten einer Matrix als Bitmuster. Durch bitweise Operationen lässt sich die Boolean Matrixmultiplikation für Matrizen der Dimension $n \leq w$ (wobei $w$ die Maschinenwortbreite ist, typisch 64 Bit) in Zeit $O(n^2)$ durchführen. Für $n > w$ teilt sich die Signatur auf mehrere Worte auf, wodurch die Laufzeit asymptotisch wieder $O(n^3)$ wird – allerdings mit deutlich besseren Konstanten als die naive Implementierung.
+
+Die Arbeit ist wie folgt strukturiert: \textbf{Kapitel 2} führt die notwendigen Definitionen ein: Graphen, Adjazenzmatrizen, Wegeigenschaften, das Graphprofil und die Boolean Matrixmultiplikation.
+
+\textbf{Kapitel 3} präsentiert die Algorithmen zur Profilberechnung. Im Zentrum steht die Signatur-basierte Boolean Matrixmultiplikation mit Laufzeit $O(n^2)$ pro Multiplikation, woraus sich für die vollständige Profilberechnung eine Gesamtlaufzeit von $O(n^3)$ ergibt.
+
+\textbf{Kapitel 4} untersucht den fundamentalen Zusammenhang zwischen Graphen und Boolean Matrizen. Die strukturelle Äquivalenz von $A^k$ und Wegen der Länge $k$ wird als außergewöhnliche Eigenschaft herausgearbeitet, die das Konzept des Potenzmatrix-Caches motiviert.
+
+\textbf{Kapitel 5} präsentiert umfassende Experimente. Skalierbarkeitsanalysen bestätigen die theoretische Laufzeit $O(n^3)$. Extrapolationen auf Gehirn-Skala ($86 \cdot 10^9$ Neuronen) zeigen sowohl die praktischen Grenzen als auch interessante Einsichten (geschätzter Durchmesser von 81 Hops). Die statistische Analyse verschiedener Graphtypen identifiziert charakteristische Profile und einen inversen Trade-off zwischen Kantenmaß und Durchmesser.
+
+\textbf{Kapitel 6} definiert, was \textit{optimale Einordnung} bedeutet: Die berechneten Profile sind exakt, vollständig und deterministisch. Hierarchische Graphstrukturen und die kanonische Klassifikation nach Kantenmaß werden diskutiert.
+
+\textbf{Kapitel 7} zeigt praktische Anwendungen in fünf Domänen: Neurowissenschaften (Konnektomanalyse), Künstliche Intelligenz (Neural Architecture Search), Rechenzentren (Topologie-Optimierung), Soziale Netzwerke (Influencer-Identifikation) und Molekularbiologie (Protein-Netzwerke).
+
+\textbf{Kapitel 8} diskutiert theoretische Implikationen: die Überlegenheit deterministischer Verfahren für sicherheitskritische Anwendungen, die komplexitätstheoretische Einordnung in P, und die Universalität der Signatur-Methode für weitere Graphprobleme.
+
+\textbf{Kapitel 9} fasst die zentralen Ergebnisse zusammen und gibt einen Ausblick auf offene Forschungsfragen: Parallelisierung, Approximationsalgorithmen für extrem große Graphen, Quantenalgorithmen und die Konstruktion einer öffentlichen Graphprofil-Datenbank.
+
+\textbf{Kapitel 10} schließt die Arbeit mit einem Fazit ab und betont die Kernbotschaft: Jeder Graph wird optimal in die Graphprofilverteilung eingeordnet, und darauf basierende Entscheidungen sind deterministisch und reproduzierbar.
+
 \section{Definitionen}
 In diesem Kapitel werden die Definitionen für diese Arbeit eingeführt.
 \subsection{Graphen}
@@ -220,6 +248,17 @@ Gesamtkomplexität: $O(n^2) + O(n^2) = O(n^2)$
 \subsection{Wegeberechnung}
 Die Berechnung des kürzesten Weges zwischen allen Knotenpaaren basiert auf der wiederholten Anwendung der Boolean Matrixmultiplikation.
 
+\begin{satz}[Laufzeit mit Signatur-Methode]
+	Algorithmus \ref{alg:shortest-paths} berechnet alle kürzesten Wege in Zeit $O(n^3)$ unter Verwendung der Signatur-basierten Boolean Matrixmultiplikation.
+\end{satz}
+
+\begin{proof}
+	Der Algorithmus führt höchstens $n-1$ Iterationen durch. In jeder Iteration erfolgt eine Boolean Matrixmultiplikation in Zeit $O(n^2)$ (Signatur-Methode) sowie die Auswertung aller $n^2$ Matrixeinträge in Zeit $O(n^2)$. Damit ergibt sich:
+	\[
+	T(n) = O(n) \cdot (O(n^2) + O(n^2)) = O(n^3)
+	\]
+\end{proof}
+
 \begin{algorithm}[H]
 	\caption{Kürzeste Wege mit Boolean Matrixmultiplikation}
 	\label{alg:shortest-paths}
@@ -245,17 +284,6 @@ Die Berechnung des kürzesten Weges zwischen allen Knotenpaaren basiert auf der 
 		\State \Return $D$
 	\end{algorithmic}
 \end{algorithm}
-
-\begin{satz}[Laufzeit mit Signatur-Methode]
-	Algorithmus \ref{alg:shortest-paths} berechnet alle kürzesten Wege in Zeit $O(n^3)$ unter Verwendung der Signatur-basierten Boolean Matrixmultiplikation.
-\end{satz}
-
-\begin{proof}
-	Der Algorithmus führt höchstens $n-1$ Iterationen durch. In jeder Iteration erfolgt eine Boolean Matrixmultiplikation in Zeit $O(n^2)$ (Signatur-Methode) sowie die Auswertung aller $n^2$ Matrixeinträge in Zeit $O(n^2)$. Damit ergibt sich:
-	\[
-	T(n) = O(n) \cdot (O(n^2) + O(n^2)) = O(n^3)
-	\]
-\end{proof}
 
 Die Bestimmung des längsten Weges in einem azyklischen Graphen kann ebenfalls durch Matrixpotenzen erfolgen.
 
@@ -286,7 +314,7 @@ Die Bestimmung des längsten Weges in einem azyklischen Graphen kann ebenfalls d
 	Für azyklische Graphen kann das Profil (kürzeste und längste Wege) in Zeit $O(n^3)$ vollständig berechnet werden.
 \end{korollar}
 
-\subsection{Optimierte Profilberechnung}
+\subsection{Optimale Graphprofilberechnung}
 Durch geschickte Nutzung der Signatur-Methode lässt sich die Profilberechnung weiter optimieren.
 
 \begin{satz}[Effizienz der Profilberechnung]
@@ -652,8 +680,6 @@ Dies bedeutet: In einem Gehirn-skalierten Small-World-Netzwerk sind alle Neurone
 
 \subsection{Graphprofilverteilung}
 
-\subsubsection{Statistische Analyse}
-
 Für jede Graph-Konfiguration wurden 20 unabhängige Instanzen mit $n = 100$ Knoten generiert und deren Profile berechnet. Tabelle \ref{tab:distribution} zeigt die statistischen Kenngrößen.
 
 \begin{table}[H]
@@ -678,11 +704,7 @@ Für jede Graph-Konfiguration wurden 20 unabhängige Instanzen mit $n = 100$ Kno
 	\end{tabular}
 \end{table}
 
-\subsubsection{Charakterisierung der Graphtypen}
-
-\paragraph{Deterministische vs. Stochastische Graphen}
-
-Auffällig ist die unterschiedliche Variabilität des Kantenmaßes $\kappa$:
+Werden deterministische und stochastische Graphen miteinander verglichen, ist die unterschiedliche Variabilität des Kantenmaßes $\kappa$ auffällig:
 
 \begin{itemize}
 	\item[-] \textbf{Deterministische Konstruktionen} (Scale-Free, Small-World): $\sigma_\kappa \approx 0$ – das Kantenmaß ist eine direkte Folge der Konstruktionsparameter
@@ -702,8 +724,6 @@ Auffällig ist die unterschiedliche Variabilität des Kantenmaßes $\kappa$:
 	\]
 	Die Anzahl der Kanten folgt $m \sim \text{Binomial}(n(n-1), p)$, daher $\sigma_\kappa > 0$.
 \end{lemma}
-
-\paragraph{Durchmesser und Netzwerkeffizienz}
 
 Die biologisch inspirierten Graphtypen zeigen charakteristische Durchmesser-Profile:
 
@@ -732,8 +752,6 @@ Die biologisch inspirierten Graphtypen zeigen charakteristische Durchmesser-Prof
 \end{proof}
 
 \subsection{Klassifikation neuronaler Netzwerke}
-
-\subsubsection{Einordnung realer Gehirnnetzwerke}
 
 Basierend auf den experimentellen Ergebnissen lassen sich reale neuronale Netzwerke in die Graphprofilverteilung einordnen:
 
@@ -764,9 +782,7 @@ Basierend auf den experimentellen Ergebnissen lassen sich reale neuronale Netzwe
 	Dieses Profil balanciert energetische Kosten (Anzahl Synapsen) mit funktionaler Effizienz (kurze Signalwege).
 \end{korollar}
 
-\subsubsection{Implikationen für künstliche neuronale Netze}
-
-Die Erkenntnisse lassen sich auf künstliche neuronale Netze übertragen:
+Die Ergebnisse lassen sich auf künstliche neuronale Netze übertragen:
 
 \begin{beispiel}[Architektur-Design für Deep Learning]
 	Ein künstliches neuronales Netz mit $10^6$ Parametern sollte nach biologischem Vorbild ein Profil anstreben:
@@ -788,16 +804,14 @@ Die Erkenntnisse lassen sich auf künstliche neuronale Netze übertragen:
 
 Die Experimente produzieren drei zentrale Visualisierungen, die die charakteristischen Eigenschaften der verschiedenen Graphtypen verdeutlichen.
 
-\subsubsection{Kantenmaß-Verteilung}
-
-Abbildung \ref{fig:kappa_distribution} zeigt die Verteilung des Kantenmaßes $\kappa$ über alle neun untersuchten Graph-Konfigurationen. Der grün markierte Bereich ($\kappa \in [0.15, 0.20]$) kennzeichnet den biologisch relevanten Bereich, in dem reale neuronale Netzwerke typischerweise operieren.
-
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.95\textwidth]{kappa_distribution.pdf}
 	\caption{Kantenmaß $\kappa$ über verschiedene Graphtypen. Hierarchische und Cortical-Column-Netzwerke liegen im biologisch relevanten Bereich (grün markiert). Fehlerbalken zeigen die Standardabweichung über 20 Samples.}
 	\label{fig:kappa_distribution}
 \end{figure}
+
+Abbildung \ref{fig:kappa_distribution} zeigt die Verteilung des Kantenmaßes $\kappa$ über alle neun untersuchten Graph-Konfigurationen. Der grün markierte Bereich ($\kappa \in [0.15, 0.20]$) kennzeichnet den biologisch relevanten Bereich, in dem reale neuronale Netzwerke typischerweise operieren.
 
 \textbf{Beobachtungen}:
 \begin{itemize}
