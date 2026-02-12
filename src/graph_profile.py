@@ -4,7 +4,7 @@ Implementiert die Algorithmen aus der Arbeit graphs.tex
 """
 
 import numpy as np
-from typing import Tuple, Dict, Optional
+from typing import Tuple, Dict, Optional, Any
 import sys
 import os
 
@@ -279,7 +279,7 @@ class GraphProfileCalculator:
         }
 
     def analyze_brain_information_flow(self, adj_matrix: np.ndarray, 
-                                       primary_direction: str = 'forward') -> Dict[str, any]:
+                                       primary_direction: str = 'forward') -> Dict[str, Any]:
         """
         Analysiert die Gehirn-Informationsverarbeitung mit Drehrichtung.
         

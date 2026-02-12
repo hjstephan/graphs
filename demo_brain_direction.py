@@ -91,11 +91,14 @@ def demo_cortical_layers():
         
         # Feed-forward Verbindungen
         for i in range(start, end):
-            # Jedes Neuron verbindet zu 2 Neuronen in nächster Schicht
-            targets = np.random.choice(range(next_start, min(next_end, n_total)), 
-                                      size=min(2, n_total - next_start), replace=False)
-            for t in targets:
-                adj[i, t] = 1
+            # Jeder Knoten verbindet zu 2 Neuronen in nächster Schicht
+            if next_start < n_total:
+                num_targets = min(2, n_total - next_start)
+                if num_targets > 0:
+                    targets = np.random.choice(range(next_start, min(next_end, n_total)), 
+                                              size=num_targets, replace=False)
+                    for t in targets:
+                        adj[i, t] = 1
     
     # Feedback von Layer 6 zu Layer 4
     layer_6_start = 5 * n_per_layer

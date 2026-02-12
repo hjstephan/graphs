@@ -49,7 +49,7 @@ class TestBrainDirectionProcessing:
         # Überprüfe, dass Berechnung durchläuft
         assert D_bwd.shape == (3, 3)
         assert L_bwd.shape == (3, 3)
-        assert kappa_bwd == 1.0  # 3 Knoten, 3 Kanten
+        assert abs(kappa_bwd - 1.0) < 1e-10  # 3 Knoten, 3 Kanten
 
     def test_bidirectional_profile(self, calculator):
         """Test der bidirektionalen Profil-Berechnung."""
@@ -191,8 +191,8 @@ class TestBrainDirectionProcessing:
         analysis_acyclic = calculator.analyze_brain_information_flow(adj_acyclic, 'forward')
         analysis_cyclic = calculator.analyze_brain_information_flow(adj_cyclic, 'forward')
         
-        # Azyklischer Graph sollte höhere Adaptivity (mehr gerichtet) haben
-        # Zyklischer Graph ist flexibler (niedrigere Adaptivity)
+        # Azyklischer Graph sollte höhere oder gleiche Adaptivity (mehr/gleich gerichtet) haben
+        # Zyklischer Graph ist oft flexibler (niedrigere Adaptivity)
         assert analysis_acyclic['adaptivity_score'] >= analysis_cyclic['adaptivity_score']
 
     def test_empty_graph_direction(self, calculator):

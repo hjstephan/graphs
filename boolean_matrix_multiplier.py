@@ -17,14 +17,14 @@ class BooleanMatrixMultiplier:
     
     def multiply_optimized(self, A: np.ndarray, B: np.ndarray) -> np.ndarray:
         """
-        Boolean Matrixmultiplikation in O(n²) via Signaturen.
+        Boolean Matrixmultiplikation mit numpy-optimierten Operationen.
         
-        Algorithmus 1 aus graphs.tex:
-        Phase 1: Signatur-Berechnung O(n²)
-          - Berechne Zeilen-Signaturen von A
-          - Berechne Spalten-Signaturen von B
-        Phase 2: Multiplikation O(n²)
-          - Für alle i,j: bitweise AND der Signaturen
+        Diese Implementierung nutzt numpy's vektorisierte Operationen für
+        Boolean-Multiplikation. Die Komplexität ist O(n³) mit konstanter
+        Optimierung durch SIMD-Operationen in numpy.
+        
+        Für sehr große Matrizen kann eine echte O(n²) Signatur-Methode
+        mit Bit-Packing implementiert werden (siehe Algorithmus 1 in graphs.tex).
         
         Args:
             A: Boolean Matrix (m x n)
@@ -42,12 +42,8 @@ class BooleanMatrixMultiplier:
         # Ergebnis-Matrix
         C = np.zeros((m, p), dtype=int)
         
-        # Phase 1: Signatur-Berechnung
-        # Zeilen-Signaturen von A: Für jede Zeile, welche Spalten sind 1?
-        # Spalten-Signaturen von B: Für jede Spalte, welche Zeilen sind 1?
-        
-        # Für kleine Matrizen: verwende einfache numpy Operationen
-        # Dies ist bereits optimiert und nutzt SIMD-Operationen
+        # Boolean Multiplikation: C[i,j] = 1 gdw. ∃k: A[i,k] ∧ B[k,j]
+        # Nutzt numpy's optimierte bitweise Operationen
         for i in range(m):
             for j in range(p):
                 # C[i,j] = 1 gdw. es gibt ein k mit A[i,k] = 1 und B[k,j] = 1
