@@ -25,7 +25,7 @@ def main():
     print("-" * 80)
     
     n = 8
-    positions = processor.generate_circular_layout(n, radius=1.0)
+    positions = processor.generate_circular_layout(n)
     
     print(f"Generiere {n} Knoten in zirkulärer Anordnung...")
     

@@ -38,7 +38,7 @@ class BrainInformationProcessor:
             center: Zentrum der Rotation (Standard: Schwerpunkt)
             
         Returns:
-            Array der Winkel in negativer Richtung (radiants)
+            Array der Winkel in negativer Richtung (radians)
         """
         if center is None:
             center = np.mean(node_positions, axis=0)
