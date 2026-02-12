@@ -3,7 +3,7 @@
 Experimente zur Gehirn-Informationsverarbeitung mit Rotationsrichtung.
 
 Generiert Experimente und Visualisierungen für das neue Kapitel in graphs.tex:
-- Rotationsrichtung (rechtsherum/clockwise) im Gehirn
+- Rotationsrichtung im Gehirn (rechtsherum, im Uhrzeigersinn, entspricht negativer Winkelrichtung)
 - Ad-hoc Informationsselektion basierend auf Synapsenverknüpfungen
 - Vergleichsstudien verschiedener neuronaler Strukturen
 """
