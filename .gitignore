@@ -46,3 +46,10 @@ venv/
 env/
 ENV/
 .venv
+
+# LaTeX
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
