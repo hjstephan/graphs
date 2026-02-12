@@ -1,0 +1,71 @@
+name: Create Tag v2.0.0 and Delete Merged Branches
+
+on:
+  workflow_dispatch:
+    inputs:
+      create_tag:
+        description: 'Create tag v2.0.0'
+        required: true
+        default: 'true'
+        type: boolean
+      delete_branches:
+        description: 'Delete merged branches'
+        required: true
+        default: 'true'
+        type: boolean
+
+jobs:
+  create-tag-and-cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      
+      - name: Create tag v2.0.0
+        if: ${{ github.event.inputs.create_tag == 'true' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Check if tag already exists
+          if git rev-parse v2.0.0 >/dev/null 2>&1; then
+            echo "Tag v2.0.0 already exists"
+          else
+            # Create annotated tag on main branch
+            git tag -a v2.0.0 -m "Release v2.0.0"
+            git push origin v2.0.0
+            echo "Tag v2.0.0 created and pushed"
+          fi
+      
+      - name: Delete merged branches
+        if: ${{ github.event.inputs.delete_branches == 'true' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # List of branches that have been merged and should be deleted
+          MERGED_BRANCHES=(
+            "copilot/add-information-processing-direction"
+            "copilot/update-brain-information-processing"
+            "copilot/update-science-documents"
+            "copilot/update-graphs-document"
+            "copilot/update-chapter-11-and-release"
+          )
+          
+          echo "Deleting merged branches..."
+          for branch in "${MERGED_BRANCHES[@]}"; do
+            # Check if branch exists
+            if git ls-remote --heads origin "$branch" | grep -q "$branch"; then
+              echo "Deleting branch: $branch"
+              git push origin --delete "$branch" || echo "Failed to delete $branch"
+            else
+              echo "Branch $branch does not exist or already deleted"
+            fi
+          done
+          
+          echo "Branch cleanup completed"
