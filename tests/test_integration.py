@@ -8,7 +8,7 @@ import sys
 import os
 
 
-from boolean_matrix_multiplier import BooleanMatrixMultiplier
+from src.boolean_matrix_multiplier import BooleanMatrixMultiplier
 from src.graph_profile import GraphProfileCalculator
 
 

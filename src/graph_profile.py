@@ -8,7 +8,7 @@ from typing import Tuple, Dict, Optional, Any
 import sys
 import os
 
-from boolean_matrix_multiplier import BooleanMatrixMultiplier
+from src.boolean_matrix_multiplier import BooleanMatrixMultiplier
 
 class GraphProfileCalculator:
     """
