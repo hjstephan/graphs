@@ -1,6 +1,6 @@
 # Graphen mit Knoten und Kanten
 
-[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](https://github.com/hjstephan/graphs/releases)
+[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/hjstephan/graphs/releases)
 [![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Tests](https://img.shields.io/badge/tests-51%20passed-brightgreen.svg)](tests/)
@@ -38,7 +38,7 @@ Dieses Projekt implementiert effiziente Algorithmen zur **optimalen** Berechnung
 - ✅ **Dokumentation** - Umfassende Docstrings
 - ✅ **Wissenschaftliche Arbeit** - 46 Seiten LaTeX-Dokumentation
 
-## 📦 Release v1.1.0
+## 📦 Release v2.0.0
 
 Diese Version enthält die vollständige Implementierung der Algorithmen aus der wissenschaftlichen Arbeit mit folgenden Highlights:
 
