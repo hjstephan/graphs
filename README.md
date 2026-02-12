@@ -15,6 +15,10 @@ Dieses Projekt implementiert effiziente Algorithmen zur **optimalen** Berechnung
   - Kürzeste Wege (Distanzmatrix D)
   - Längste Wege (Matrix L)
   - Kantenmaß κ = |V| / |E|
+- **Gehirn-Informationsverarbeitung mit Rotationsrichtung**:
+  - Rechtsherum (Uhrzeigersinn) - negative Winkelrichtung
+  - Ad-hoc Pfadwahl basierend auf Synapsenverknüpfungen
+  - Rotationsfluss-Analyse für neuronale Netzwerke
 - **Optimale Charakterisierung**: Deterministisch, vollständig, nicht approximativ
 - **Hierarchische Analyse**: Unterstützung für mehrstufige Graphsysteme
 - Vollständige Testsuite mit pytest
@@ -290,6 +294,37 @@ Die optimale Profilberechnung hat weitreichende Anwendungen in verschiedenen Dom
 - Optimale Charakterisierung neuronaler Netzwerke (86 Mrd. Neuronen)
 - Deterministische Vergleiche zwischen Individuen
 - Detektion struktureller Anomalien bei neurologischen Erkrankungen
+
+**Gehirn-Informationsverarbeitung mit Rotationsrichtung:**
+
+Das Gehirn hat von oben betrachtet eine Drehrichtung zur allgemeinen Verarbeitung von Informationen. Die Drehrichtung ist bei Menschen **rechtsherum** (im Uhrzeigersinn), also von oben in negativer Winkelrichtung. Bei der Ad-hoc Informationsselektion wird nach Bedarf der entsprechende Weg durch das Gehirn gewählt, wie es zur aktuellen Synapsenverknüpfung passt.
+
+```python
+from src.brain_information_processing import BrainInformationProcessor
+
+processor = BrainInformationProcessor()
+
+# Generiere zirkuläres Layout für Gehirnregionen
+n = 20
+positions = processor.generate_circular_layout(n)
+
+# Erstelle neuronales Netzwerk
+adj = create_neural_network(n)
+
+# Analysiere Rotationseigenschaften
+props = processor.analyze_rotational_properties(adj, positions)
+print(f"Rotationseffizienz: {props['rotation_efficiency']:.3f}")
+print(f"Durchmesser: {props['diameter']}")
+
+# Ad-hoc Pfadwahl basierend auf Synapsenverknüpfungen
+synaptic_weights = get_synaptic_strengths(adj)
+path = processor.select_path_by_synaptic_strength(
+    adj, start=0, end=10, 
+    synaptic_weights=synaptic_weights,
+    rotation_preference=True  # Bevorzuge rechtsdrehende Pfade
+)
+print(f"Gewählter Informationspfad: {path}")
+```
 
 **Beispiel**: Alzheimer-Früherkennung durch Analyse von Profiländerungen im Hippocampus-Netzwerk.
 
