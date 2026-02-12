@@ -115,6 +115,49 @@ print(f"Durchmesser: {stats['diameter']}")
 print(f"Maximaler längster Weg: {stats['max_longest_path']}")
 ```
 
+### Gehirn-Informationsverarbeitung mit Drehrichtung (NEU)
+
+```python
+from src.graph_profile import GraphProfileCalculator
+import numpy as np
+
+calculator = GraphProfileCalculator()
+
+# Kortikale Säulenstruktur (vereinfacht)
+cortical_column = np.array([...])  # 6 Schichten
+
+# Analysiere Informationsfluss
+analysis = calculator.analyze_brain_information_flow(cortical_column, 'forward')
+
+print(f"Primäre Richtung: {analysis['primary_direction']}")
+print(f"Adaptivitäts-Score: {analysis['adaptivity_score']}")
+print(f"Interpretation: {analysis['interpretation']}")
+
+# Bidirektionale Analyse (Forward + Feedback)
+bidirectional = calculator.compute_bidirectional_profile(cortical_column)
+
+print(f"Forward Effizienz: {bidirectional['combined']['avg_path_forward']}")
+print(f"Backward Effizienz: {bidirectional['combined']['avg_path_backward']}")
+print(f"Direktionalitäts-Ratio: {bidirectional['combined']['directionality_ratio']}")
+
+# Spezifische Richtung berechnen
+D_fwd, L_fwd, kappa_fwd = calculator.compute_profile_with_direction(
+    cortical_column, direction='forward'
+)
+D_bwd, L_bwd, kappa_bwd = calculator.compute_profile_with_direction(
+    cortical_column, direction='backward'
+)
+```
+
+**Konzept**:
+Das Gehirn hat von oben betrachtet eine Drehrichtung zur allgemeinen Verarbeitung von Informationen. Die Drehrichtung ist bei Menschen rechtsherum (negative Winkelrichtung). Bei der ad-hoc Informationsselektion wird nach Bedarf der entsprechende Weg durch das Gehirn gewählt, wie es zur aktuellen Synapsenverknüpfung passt.
+
+**Anwendungen**:
+- Analyse kortikaler Schichten-Strukturen (Layer 1-6)
+- Feed-forward vs. Feedback-Verarbeitung
+- Charakterisierung von Netzwerk-Adaptivität
+- Ad-hoc Pfadselektions-Flexibilität
+
 ### Hierarchische Graphanalyse
 
 ```python
@@ -132,6 +175,19 @@ D_vm, L_vm, kappa_vm = calculator.compute_profile(vms)
 if kappa_server > 2 * kappa_rack:
     print("Warnung: Netzwerkpartitionierung auf Server-Ebene!")
 ```
+
+## Demonstration ausführen
+
+```bash
+# Gehirn-Informationsverarbeitung Demo
+python demo_brain_direction.py
+```
+
+Dies demonstriert:
+1. Grundlegende Drehrichtung (clockwise/counter-clockwise)
+2. Kortikale Schichtenstruktur (6 Layer)
+3. Ad-hoc Informationsselektion
+4. Vergleich verschiedener Verarbeitungstypen
 
 ## Tests ausführen
 
@@ -291,6 +347,12 @@ Die optimale Profilberechnung hat weitreichende Anwendungen in verschiedenen Dom
 - Deterministische Vergleiche zwischen Individuen
 - Detektion struktureller Anomalien bei neurologischen Erkrankungen
 
+**Gerichtete Informationsverarbeitung:**
+- **NEU**: Analyse der Gehirn-Informationsfluss-Richtung (clockwise/counter-clockwise)
+- Das Gehirn hat von oben betrachtet eine Drehrichtung zur Informationsverarbeitung
+- Bei Menschen ist diese rechtsherum (negative Winkelrichtung = clockwise)
+- Ad-hoc Informationsselektion wählt Pfade basierend auf aktueller Synapsenverknüpfung
+
 **Beispiel**: Alzheimer-Früherkennung durch Analyse von Profiländerungen im Hippocampus-Netzwerk.
 
 ```python
@@ -300,6 +362,11 @@ D_patient, L_patient, kappa_patient = calculator.compute_profile(hippocampus_pat
 
 if kappa_patient > 1.5 * kappa_healthy:
     print("Signifikante Reduktion der Konnektivität detektiert")
+
+# NEU: Analysiere Informationsfluss-Richtung
+analysis = calculator.analyze_brain_information_flow(hippocampus_patient, 'forward')
+print(f"Adaptivitäts-Score: {analysis['adaptivity_score']}")
+print(f"Interpretation: {analysis['interpretation']}")
 ```
 
 ### 🤖 Künstliche Intelligenz
