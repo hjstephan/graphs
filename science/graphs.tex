@@ -12,7 +12,7 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{chngcntr}
-\usepackage[protrusion=true,expansion=false]{microtype}
+\usepackage{microtype}
 
 \geometry{margin=2.5cm}
 
@@ -580,7 +580,7 @@ Der außergewöhnliche Zusammenhang zwischen Graphen und Boolean Matrizen lässt
 
 Diese Erkenntnis rechtfertigt die Investition in die Vorberechnung: Sie transformiert ein wiederholt $O(n^3)$-kostspieliges Problem in ein einmalig $O(n^3)$-kostspieliges Problem mit anschließend konstanter Abfragezeit.
 
-\section{Asymmetrische Optimierung für gerichtete Graphen}
+\section{Gerichtete Graphen: Asymmetrische Optimierung}
 
 Die Beobachtung, dass Zeilen und Spalten einer Adjazenzmatrix unterschiedliche semantische und rechnerische Eigenschaften besitzen, führt zu weiteren Optimierungen der Boolean Matrixmultiplikation. In diesem Kapitel wird gezeigt, wie diese fundamentale Asymmetrie genutzt werden kann, um für bestimmte Graphklassen effizientere Algorithmen zu entwickeln.
 
@@ -806,7 +806,7 @@ Für sparse Graphen mit $m = |E| \ll n^2$ kann die Asymmetrie weiter ausgenutzt 
 	\label{tab:bmm-comparison}
 	\begin{tabular}{lccc}
 		\hline
-		\textbf{Graphklasse} & \textbf{Standard} & \textbf{Spalten-priorisiert} & \textbf{Beschleunigung} \\
+		\textbf{Graphklasse} & \textbf{Standard} & \textbf{Spalten-pr.} & \textbf{Faktor} \\
 		\hline
 		Dichte Graphen ($m = \Theta(n^2)$) & $O(n^2)$ & $O(n^2)$ & $1\times$ \\
 		Broadcasting ($\bar{d}_{\text{out}} = \Theta(n)$, $\bar{d}_{\text{in}} = O(1)$) & $O(n^3)$ & $O(n^2)$ & $n\times$ \\
@@ -1450,7 +1450,7 @@ Vergleich von Protein-Netzwerken über Spezies hinweg:
 	\item[-] Konservierte Subgraphen haben ähnliche lokale Profile
 \end{itemize}
 
-\section{Gehirn-Informationsverarbeitung und Rotationsrichtung}
+\section{Gehirn-Informationsverarbeitung}
 
 Die Analyse neuronaler Netzwerke offenbart eine fundamentale Eigenschaft der Informationsverarbeitung im Gehirn: Von oben betrachtet zeigt das Gehirn eine bevorzugte Drehrichtung für die allgemeine Verarbeitung von Informationen. Bei Menschen ist diese Drehrichtung \textbf{rechtsherum} (im Uhrzeigersinn), entsprechend einer negativen Winkelrichtung in der mathematischen Konvention.
 
@@ -1728,7 +1728,7 @@ Weitere Anwendungen:
 	\item[-] \textbf{Kürzeste Pfade mit Gewichten}: Erweiterung auf gewichtete Graphen durch Anpassung der Signatur-Methode
 \end{itemize}
 
-\section{Zusammenfassung, Theoretische Implikationen und Ausblick}
+\section{Zusammenfassung, Implikationen und Ausblick}
 
 Diese Arbeit hat gezeigt, wie die Signatur-Methode aus der Boolean Matrixmultiplikation zur effizienten Berechnung von Graphprofilen eingesetzt werden kann. Die entwickelten Algorithmen ermöglichen die optimale Einordnung jedes Graphen in die Graphprofilverteilung mit deterministischen, reproduzierbaren Ergebnissen.
 
@@ -1842,7 +1842,7 @@ Diese mehrstufige Optimierung ist übertragbar auf weitere Probleme der diskrete
 
 Die theoretischen Erkenntnisse dieser Arbeit haben weitreichende Implikationen für das Verständnis der Gehirn-Informationsverarbeitung. Die in Kapitel 8 präsentierte Analyse der Rotationsrichtung eröffnet ein neues Paradigma, das hier ausführlich in seinen Konsequenzen diskutiert wird.
 
-\subsubsection{Fundamentale Erkenntnisse über direktionale Informationsverarbeitung}
+\subsubsection{Direktionale Informationsverarbeitung: Fundamentale Erkenntnisse}
 
 Das menschliche Gehirn zeigt eine präferierte \textbf{rechtsdrehende} (im Uhrzeigersinn) Informationsverarbeitung von oben betrachtet. Diese Beobachtung hat fundamentale Konsequenzen für unser Verständnis neuronaler Informationsverarbeitung:
 
@@ -1897,13 +1897,13 @@ Die experimentellen Ergebnisse aus Kapitel 8 zeigen fundamentale Zusammenhänge:
 Die Rotationsrichtung und ad-hoc Pfadwahl haben tiefgreifende Konsequenzen für kognitive Funktionen:
 
 \begin{enumerate}
-	\item \textbf{Effizienz der Informationsverarbeitung}: Die rechtsdrehende Hauptrichtung ermöglicht schnelle, energieeffiziente Verarbeitung durch Nutzung optimierter Pfade. Dies erklärt die kurzen Reaktionszeiten ($< 300$ ms) für viele kognitive Aufgaben trotz des geschätzten Durchmessers von 81 Hops für Gehirn-skalierte Netzwerke.
+	\item \textbf{Effizienz der Informationsverarbeitung}: Die rechtsdrehende Hauptrichtung er\-möglicht schnelle, energieeffiziente Verarbeitung durch Nutzung optimierter Pfade. Dies erklärt die kurzen Reaktionszeiten ($< 300$ ms) für viele kognitive Aufgaben trotz des geschätzten Durchmessers von 81 Hops für Gehirn-skalierte Netzwerke.
 	
 	\item \textbf{Flexible Aufmerksamkeit}: Ad-hoc Pfadwahl ermöglicht dynamische Fokussierung der Aufmerksamkeit durch selektive Aktivierung alternativer Pfade. Dies ist die neuronale Grundlage für Top-down und Bottom-up Aufmerksamkeitsmechanismen.
 	
 	\item \textbf{Robustheit und Redundanz}: Die Existenz multipler Pfade mit unterschiedlichen Rotationsrichtungen gewährleistet Robustheit gegenüber lokalen neuronalen Ausfällen oder Läsionen. Das Gehirn kann alternative Pfade aktivieren, um Funktionalität aufrechtzuerhalten.
 	
-	\item \textbf{Lern- und Plastizitätsmechanismen}: Die Balance zwischen strukturierter (forward-dominierter) und flexibler (reziproker) Verarbeitung ermöglicht sowohl effizientes Abrufen gelernter Muster als auch flexible Anpassung an neue Situationen.
+	\item \textbf{Lern- und Plastizitätsmechanismen}: Die Balance zwischen strukturierter (for\-ward-dominierter) und flexibler (reziproker) Verarbeitung ermöglicht sowohl effizientes Abrufen gelernter Muster als auch flexible Anpassung an neue Situationen.
 	
 	\item \textbf{Pathologische Abweichungen}: Störungen der Rotationsrichtungs-Balance können zu kognitiven Defiziten führen. Beispiele:
 	\begin{itemize}
@@ -1924,9 +1924,9 @@ Die Erkenntnisse über Rotationsrichtung in biologischen neuronalen Netzwerken h
 	
 	\item[-] \textbf{Adaptive Routing}: Implementierung ad-hoc Pfadwahl-Mechanismen in künstlichen neuronalen Netzen ermöglicht flexibles Switching zwischen verschiedenen Verarbeitungsmodi (schnelle Feed-forward Inferenz vs. tiefe rekurrente Verarbeitung).
 	
-	\item[-] \textbf{Erklärbarkeit}: Die Analyse des erweiterten Graphprofils $\mathcal{P}_{\text{neuro}}(G)$ ermöglicht Interpretierbarkeit neuronaler Netze durch Quantifizierung der Informationsfluss-Eigenschaften. Dies ist kritisch für AI-Safety und Verifikation.
+	\item[-] \textbf{Erklärbarkeit}: Die Analyse des erweiterten Graphprofils $\mathcal{P}_{\text{neuro}}(G)$ ermöglicht Interpretierbarkeit neuronaler Netze durch Quantifizierung der Informationsfluss-Eigen\-schaften. Dies ist kritisch für AI-Safety und Verifikation.
 	
-	\item[-] \textbf{Neuromorphe Hardware}: FPGA- und ASIC-Designs sollten asymmetrische Routing-Strukturen implementieren, die rechtsdrehende Informationsflüsse bevorzugen, um energieeffiziente Berechnung zu erreichen.
+	\item[-] \textbf{Neuromorphe Hardware}: FPGA- und ASIC-Designs sollten asymmetrische Rou\-ting-Strukturen implementieren, die rechtsdrehende Informationsflüsse bevorzugen, um energieeffiziente Berechnung zu erreichen.
 \end{itemize}
 
 \subsubsection{Gehirn-Computer-Interfaces und Neuroprothetik}
@@ -2007,7 +2007,7 @@ Die entwickelten Methoden eröffnen vielfältige Anwendungen, die durch die Erke
 	
 	\item[-] \textbf{Rechenzentren}: 
 	\begin{itemize}
-		\item Topologie-Optimierung unter Berücksichtigung von Informationsfluss-Direktionalität
+		\item Topologie-Optimierung unter Berücksichtigung von Informationsfluss-Di\-rektio\-nalität
 		\item Profilbasiertes Load Balancing mit Rotationseffizienz
 		\item Energieeffiziente Routing-Protokolle basierend auf biologischen Prinzipien
 	\end{itemize}
@@ -2099,7 +2099,7 @@ Eine mögliche Anwendung ist die Konstruktion einer öffentlich zugänglichen Da
 \textbf{Datenquellen}:
 \begin{itemize}
 	\item[-] Biologische Netzwerke (Protein-Interaktionen, metabolische Netzwerke, neuronale Konnektome mit Rotationsprofilen)
-	\item[-] Soziale Netzwerke (Co-Authorship, Zitationsnetzwerke mit Informationsfluss-Direktionalität)
+	\item[-] Soziale Netzwerke (Co-Authorship, Zitationsnetzwerke mit Informationsfluss-Direktio\-nalität)
 	\item[-] Infrastrukturgraphen (Straßennetze, Stromnetz, Internet-Topologie)
 	\item[-] Künstliche neuronale Netze (Architekturen erfolgreicher Modelle mit $\mathcal{P}_{\text{neuro}}(G)$)
 \end{itemize}
@@ -2198,7 +2198,7 @@ Die entwickelten Methoden sind universell einsetzbar:
 	
 	\item[-] \textbf{Künstliche Intelligenz}: Deterministische Architektur-Suche, Modellvergleich, Verifikation durch Profilüberwachung. Die Integration von Rotationsrichtung in AI-Design kann Trainingsgeschwindigkeit um Faktor 2--5 verbessern.
 	
-	\item[-] \textbf{Infrastruktur}: Topologie-Optimierung von Rechenzentren, Netzwerken, Versorgungssystemen unter Berücksichtigung von Informationsfluss-Direktionalität.
+	\item[-] \textbf{Infrastruktur}: Topologie-Optimierung von Rechenzentren, Netzwerken, Versor\-gungs\-systemen unter Berücksichtigung von Informationsfluss-Direktionalität.
 	
 	\item[-] \textbf{Soziale Systeme}: Influencer-Identifikation, Analyse von Informationsausbreitung mit Forward/Backward-Profilen.
 	

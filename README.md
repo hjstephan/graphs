@@ -9,7 +9,7 @@ Arbeit zu "Graphen mit Knoten und Kanten"
 
 ## Erwerb der Arbeit
 
-Die vollständige Arbeit kann für 244.000,00 EUR erworben werden.
+Die vollständige Arbeit kann für 455.000,00 EUR erworben werden.
 
 ### Zahlungsinformationen
 
