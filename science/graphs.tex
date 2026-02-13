@@ -64,7 +64,7 @@ Die Berechnung kürzester Wege in Graphen ist ein klassisches Problem der Inform
 
 Für \textbf{Boolean Matrizen} – Matrizen mit Einträgen aus $\{0,1\}$ und logischen Operationen statt arithmetischer – sind spezialisierte Methoden bekannt. Die naive Boolean Matrixmultiplikation hat Laufzeit $O(n^3)$. Fortgeschrittene algebraische Methoden wie \textsc{Strassen} (1969) oder \textsc{Coppersmith-Winograd} (1990) erreichen $O(n^{2.807})$ bzw. $O(n^{2.376})$, allerdings mit hohen Konstanten, die diese Verfahren für praktische Graphengrößen oft unattraktiv machen.
 
-Die \textbf{Signatur-Methode}, ursprünglich entwickelt im Kontext des Subgraph-Matching-Problems, kodiert Zeilen und Spalten einer Matrix als Bitmuster. Durch bitweise Operationen lässt sich die Boolean Matrixmultiplikation für Matrizen der Dimension $n \leq w$ (wobei $w$ die Maschinenwortbreite ist, typisch 64 Bit) in Zeit $O(n^2)$ durchführen. Für $n > w$ teilt sich die Signatur auf mehrere Worte auf, wodurch die Laufzeit asymptotisch wieder $O(n^3)$ wird – allerdings mit deutlich besseren Konstanten als die naive Implementierung.
+Die \textbf{Signatur-Methode}, ursprünglich entwickelt im Kontext des Subgraph-Matching-Problems, kodiert Zeilen und Spalten einer Matrix als Bitmuster. Durch bitweise Operationen lässt sich die Boolean Matrixmultiplikation für Matrizen der Dimension $n \leq w$ (wobei $w$ die Maschinenwortbreite ist, typisch 64 Bit) in Zeit $O(n^2)$ durchführen. Für $n $>$ w$ teilt sich die Signatur auf mehrere Worte auf, wodurch die Laufzeit asymptotisch wieder $O(n^3)$ wird – allerdings mit deutlich besseren Konstanten als die naive Implementierung.
 
 Die Arbeit ist wie folgt strukturiert: \textbf{Kapitel 2} führt die notwendigen Definitionen ein: Graphen, Adjazenzmatrizen, Wegeigenschaften, das Graphprofil und die Boolean Matrixmultiplikation.
 
@@ -378,7 +378,7 @@ def compute_profile(self, adj_matrix: np.ndarray):
 	m = int(np.sum(adj_matrix))
 	
 	# Mass fuer die Anzahl der Kanten
-	kappa = n / m if m > 0 else float('inf')
+	kappa = n / m if m $>$ 0 else float('inf')
 	
 	# Initialisierung
 	D = np.full((n, n), np.inf)
@@ -423,7 +423,7 @@ Ein Pfadgraph $P_n$ besitzt $n-1$ Kanten in linearer Anordnung. Hier gilt:
 Für \textsc{Erdős-Rényi} Zufallsgraphen $G(n,p)$ mit Kantenwahrscheinlichkeit $p$ ergibt sich:
 \begin{itemize}
 	\item[-] Erwartete Kantenzahl: $E[m] = p \cdot \binom{n}{2}$
-	\item[-] Durchschnittlicher kürzester Weg: $O(\log n)$ für $p > \frac{\log n}{n}$
+	\item[-] Durchschnittlicher kürzester Weg: $O(\log n)$ für $p $>$ \frac{\log n}{n}$
 	\item[-] Durchmesser: $O(\log n)$ mit hoher Wahrscheinlichkeit
 \end{itemize}
 
@@ -511,7 +511,7 @@ Die initiale Investition von $O(n^3)$ ermöglicht dann beliebig viele Abfragen i
 	\begin{align}
 		\text{Mit Vorberechnung: } \frac{O(n^3) + q \cdot O(1)}{q} = O\left(\frac{n^3}{q}\right) + O(1)
 	\end{align}
-	Für $q > n^3$ ist die Vorberechnung asymptotisch überlegen.
+	Für $q $>$ n^3$ ist die Vorberechnung asymptotisch überlegen.
 \end{korollar}
 
 \subsection{Verallgemeinerung: Der Potenzmatrix-Cache}
@@ -779,7 +779,7 @@ Für sparse Graphen mit $m = |E| \ll n^2$ kann die Asymmetrie weiter ausgenutzt 
 	\textbf{Ausgabe:} Matrix $C = A \cdot B$
 	\begin{algorithmic}[1]
 		\State Berechne kompakte Spalten-Signaturen von $B$ \Comment{$O(m)$}
-		\For{jede Zeile $i$ mit $\text{out-deg}(i) > 0$}
+		\For{jede Zeile $i$ mit $\text{out-deg}(i) $>$ 0$}
 		\State Berechne Zeilen-Signatur nur für nicht-null Einträge \Comment{$O(\text{out-deg}(i))$}
 		\For{jede Spalte $j$}
 		\If{Zeilen-Signatur $\cap$ Spalten-Signatur $\neq \emptyset$}
@@ -1011,7 +1011,7 @@ Werden deterministische und stochastische Graphen miteinander verglichen, ist di
 
 \begin{itemize}
 	\item[-] \textbf{Deterministische Konstruktionen} (Scale-Free, Small-World): $\sigma_\kappa \approx 0$ – das Kantenmaß ist eine direkte Folge der Konstruktionsparameter
-	\item[-] \textbf{Stochastische Konstruktionen} (Random Sparse, Modular): $\sigma_\kappa > 0$ – Variabilität durch zufällige Kantenplatzierung
+	\item[-] \textbf{Stochastische Konstruktionen} (Random Sparse, Modular): $\sigma_\kappa $>$ 0$ – Variabilität durch zufällige Kantenplatzierung
 \end{itemize}
 
 \begin{lemma}[Varianz des Kantenmaßes]
@@ -1025,7 +1025,7 @@ Werden deterministische und stochastische Graphen miteinander verglichen, ist di
 	\[
 	\kappa = \frac{n}{p \cdot n(n-1)} \approx \frac{1}{p(n-1)}
 	\]
-	Die Anzahl der Kanten folgt $m \sim \text{Binomial}(n(n-1), p)$, daher $\sigma_\kappa > 0$.
+	Die Anzahl der Kanten folgt $m \sim \text{Binomial}(n(n-1), p)$, daher $\sigma_\kappa $>$ 0$.
 \end{lemma}
 
 Die biologisch inspirierten Graphtypen zeigen charakteristische Durchmesser-Profile:
@@ -1107,7 +1107,7 @@ Die Ergebnisse lassen sich auf künstliche neuronale Netze übertragen:
 
 Die Experimente produzieren drei zentrale Visualisierungen, die die charakteristischen Eigenschaften der verschiedenen Graphtypen verdeutlichen.
 
-\begin{figure}[H]
+\begin{figure}[h]
 	\centering
 	\includegraphics[width=0.95\textwidth]{kappa_distribution.pdf}
 	\caption{Kantenmaß $\kappa$ über verschiedene Graphtypen. Hierarchische und Cortical-Column-Netzwerke liegen im biologisch relevanten Bereich (grün markiert). Fehlerbalken zeigen die Standardabweichung über 20 Samples.}
@@ -1136,8 +1136,7 @@ Abbildung \ref{fig:diameter_distribution} illustriert die Netzwerkeffizienz vers
 	\item[-] Cortical Column: Moderater Durchmesser (6.6 $\pm$ 0.5), biologisch plausibel
 \end{itemize}
 
-
-\begin{figure}[H]
+\begin{figure}[h]
 	\centering
 	\includegraphics[width=0.95\textwidth]{diameter_distribution.pdf}
 	\caption{Durchmesser über verschiedene Graphtypen. Hierarchische Netzwerke zeigen minimalen Durchmesser (5.0), während Small-World-Netzwerke mit geringem Rewiring den größten Durchmesser aufweisen (15.2 ± 2.4). Fehlerbalken zeigen die Standardabweichung.}
@@ -1148,7 +1147,7 @@ Abbildung \ref{fig:diameter_distribution} illustriert die Netzwerkeffizienz vers
 
 Abbildung \ref{fig:kappa_vs_diameter} zeigt den fundamentalen Trade-off zwischen Kanteneffizienz und Netzwerkdurchmesser. Jeder Punkt repräsentiert eine Graph-Instanz.
 
-\begin{figure}[H]
+\begin{figure}[h]
 	\centering
 	\includegraphics[width=0.85\textwidth]{kappa_vs_diameter.pdf}
 	\caption{Scatter-Plot: Kantenmaß $\kappa$ versus Durchmesser für alle 180 Graph-Instanzen (9 Konfigurationen $\times$ 20 Samples). Ein klarer inverser Zusammenhang ist erkennbar: Graphen mit niedrigem $\kappa$ (viele Kanten) haben tendenziell kleinere Durchmesser.}
@@ -1175,7 +1174,7 @@ mit Bestimmtheitsmaß $R^2 \approx 0.73$.
 \begin{enumerate}
 	\item \textbf{Hocheffiziente Netzwerke} ($\kappa < 0.2$, $\text{diam} < 7$): Hierarchical, Cortical Column, Scale-Free ($m=5$)
 	\item \textbf{Balancierte Netzwerke} ($0.2 < \kappa < 0.4$, $5 < \text{diam} < 10$): Scale-Free ($m=3$), Small-World (dicht)
-	\item \textbf{Sparse Netzwerke} ($\kappa > 0.5$, $\text{diam} > 8$): Random Sparse, Modular
+	\item \textbf{Sparse Netzwerke} ($\kappa $>$ 0.5$, $\text{diam} $>$ 8$): Random Sparse, Modular
 \end{enumerate}
 
 Biologische neuronale Netzwerke gehören zum ersten Cluster – dies unterstreicht die evolutionäre Optimierung auf minimale Verdrahtungskosten bei gleichzeitig kurzen Signalwegen. 
@@ -1254,9 +1253,9 @@ Das Kantenmaß $\kappa = \frac{|V|}{|E|}$ teilt die Menge aller Graphen in chara
 \begin{definition}[Graphdichteklassen]
 	Sei $G = (V,E)$ ein Graph mit $n = |V|$ Knoten. Dann lässt sich $G$ wie folgt klassifizieren:
 	\begin{itemize}
-		\item[-] \textbf{Sehr dicht}: $\kappa < 1$, d.h. $|E| > |V|$ (viele Kanten)
+		\item[-] \textbf{Sehr dicht}: $\kappa < 1$, d.h. $|E| $>$ |V|$ (viele Kanten)
 		\item[-] \textbf{Ausgewogen}: $\kappa \approx 1$, d.h. $|E| \approx |V|$ (Bäume, Pfade)
-		\item[-] \textbf{Dünn}: $\kappa > 2$, d.h. $|E| < |V|/2$ (wenige Kanten)
+		\item[-] \textbf{Dünn}: $\kappa $>$ 2$, d.h. $|E| < |V|/2$ (wenige Kanten)
 	\end{itemize}
 \end{definition}
 
@@ -1584,7 +1583,7 @@ Abbildung~\ref{fig:brain_directional_comparison} vergleicht Forward- und Backwar
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=\textwidth]{brain_directional_comparison.pdf}
-	\caption{Richtungsvergleich: Rechtsherum (Forward) vs. Linksherum (Backward). (links) Forward- und Backward-Pfadlängen. Feed-forward Netzwerke haben kürzere Forward-Pfade. (rechts) Direktionalitäts-Ratio. Werte > 1.0 bedeuten Forward-Dominanz, Werte $\approx$ 1.0 bedeuten Symmetrie.}
+	\caption{Richtungsvergleich: Rechtsherum (Forward) vs. Linksherum (Backward). (links) Forward- und Backward-Pfadlängen. Feed-forward Netzwerke haben kürzere Forward-Pfade. (rechts) Direktionalitäts-Ratio. Werte $>$ 1.0 bedeuten Forward-Dominanz, Werte $\approx$ 1.0 bedeuten Symmetrie.}
 	\label{fig:brain_directional_comparison}
 \end{figure}
 
@@ -2053,7 +2052,7 @@ Die Signatur-Berechnung ist inhärent parallelisierbar:
 	\item[-] Neuromorphe Hardware könnte Rotationsrichtung nativ implementieren für weitere Beschleunigung
 \end{itemize}
 
-Für extrem große Graphen ($n > 10^6$) ist exakte Berechnung praktisch unmöglich.
+Für extrem große Graphen ($n $>$ 10^6$) ist exakte Berechnung praktisch unmöglich.
 
 \begin{frage}
 	Existiert ein randomisierter oder deterministischer Approximationsalgorithmus mit Laufzeit $O(n^2)$ und garantierter Güte $\|\tilde{D} - D\|_\infty \leq \epsilon \cdot \text{diam}(G)$?
@@ -2254,7 +2253,7 @@ Zukünftige Forschungsarbeiten sollten sich auf folgende Aspekte konzentrieren:
 
 \begin{itemize}
 	\item \textbf{Parallelisierung und neuromorphe Hardware}: GPU-basierte Implementierungen und spezialisierte Hardware mit nativer Rotationsrichtungs-Unterstützung
-	\item \textbf{Approximative Verfahren}: Entwicklung von Sampling-Methoden für extrem große Netzwerke ($n > 10^6$) unter Ausnutzung der Rotationspräferenz
+	\item \textbf{Approximative Verfahren}: Entwicklung von Sampling-Methoden für extrem große Netzwerke ($n $>$ 10^6$) unter Ausnutzung der Rotationspräferenz
 	\item \textbf{Dynamische und temporale Netzwerke}: Analyse der Entwicklung von $\mathcal{P}_{\text{neuro}}(G)$ über die Zeit, insbesondere während Lern- und Plastizitätsprozessen
 	\item \textbf{Quantenalgorithmische Ansätze}: Untersuchung von Quanteneffekten bei neuronaler ad-hoc Pfadwahl und mögliche Quantenbeschleunigung
 	\item \textbf{Hierarchische und Multi-Layer-Netzwerke}: Analyse von Multi-Level-Systemen durch rekursive Profilberechnung mit Cross-Layer Rotationsfluss

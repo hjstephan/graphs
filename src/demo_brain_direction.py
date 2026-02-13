@@ -10,7 +10,7 @@ aktuellen Synapsenverknüpfung passt.
 """
 
 import numpy as np
-import sys
+import sys  
 from src.graph_profile import GraphProfileCalculator
 
 def print_section(title):

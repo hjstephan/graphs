@@ -5,7 +5,7 @@
 [![Tests](https://img.shields.io/badge/tests-51%20passed-brightgreen.svg)](tests/)
 [![Coverage](https://img.shields.io/badge/coverage-98%25-brightgreen.svg)](doc/coverage/)
 
-Arbeit zu "Graphen mit Knoten und Kanten"
+Arbeit zu Graphen mit Knoten und Kanten zur **optimalen** Berechnung von Graphprofilen und Gehirn-Informationsverarbeitung.
 
 ## Erwerb der Arbeit
 

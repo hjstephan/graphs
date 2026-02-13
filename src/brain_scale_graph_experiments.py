@@ -9,14 +9,7 @@ from typing import List, Dict, Tuple
 import json
 from pathlib import Path
 from datetime import datetime
-import sys
-import os
-
-# Füge src zum Path hinzu
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
-
-from graph_profile import GraphProfileCalculator
-
+from src.graph_profile import GraphProfileCalculator
 
 class BrainScaleExperiments:
     """
@@ -30,11 +23,10 @@ class BrainScaleExperiments:
     BRAIN_NEURONS = 86_000_000_000  # 86 Milliarden Neuronen
     SYNAPSES_PER_NEURON_AVG = 7000  # Durchschnittlich 7000 Synapsen pro Neuron
     
-    def __init__(self, output_dir: str = "src/results/brain_scale"):
+    def __init__(self, output_dir: str = "src/results"):
         self.calculator = GraphProfileCalculator()
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
-        
         # Ergebnisse speichern
         self.results = {
             'metadata': {
@@ -456,6 +448,7 @@ class BrainScaleExperiments:
         ax.grid(axis='y', alpha=0.3)
         plt.tight_layout()
         plt.savefig(self.output_dir / 'kappa_distribution.png', dpi=300)
+        plt.savefig(self.output_dir / 'kappa_distribution.svg', format='svg', dpi=300)
         plt.close()
         
         # 2. Durchmesser-Verteilung
@@ -474,6 +467,7 @@ class BrainScaleExperiments:
         ax.grid(axis='y', alpha=0.3)
         plt.tight_layout()
         plt.savefig(self.output_dir / 'diameter_distribution.png', dpi=300)
+        plt.savefig(self.output_dir / 'diameter_distribution.svg', format='svg', dpi=300)
         plt.close()
         
         # 3. κ vs. Durchmesser Scatter
@@ -492,6 +486,7 @@ class BrainScaleExperiments:
         ax.grid(alpha=0.3)
         plt.tight_layout()
         plt.savefig(self.output_dir / 'kappa_vs_diameter.png', dpi=300, bbox_inches='tight')
+        plt.savefig(self.output_dir / 'kappa_vs_diameter.svg', format='svg', dpi=300, bbox_inches='tight')
         plt.close()
         
         print(f"Visualisierungen gespeichert in: {self.output_dir}")
@@ -526,6 +521,34 @@ def main():
     
     # 4. Speichere Ergebnisse
     experiments.save_results()
+    # 5. SVG → PDF Konvertierung nach science/
+    convert_svg_to_pdf(src_dir=experiments.output_dir, target_dir=Path(__file__).parent.parent / 'science')
+
+# SVG → PDF Konvertierungstool
+def convert_svg_to_pdf(src_dir: Path, target_dir: Path):
+    """Konvertiert alle SVGs im src_dir nach PDF in target_dir."""
+    import subprocess
+    svg_files = list(src_dir.glob('*.svg'))
+    target_dir.mkdir(parents=True, exist_ok=True)
+    for svg_path in svg_files:
+        pdf_path = target_dir / (svg_path.stem + '.pdf')
+        converters = [
+            ['inkscape', str(svg_path), '--export-filename', str(pdf_path)],
+            ['cairosvg', str(svg_path), '-o', str(pdf_path)],
+            ['rsvg-convert', '-f', 'pdf', '-o', str(pdf_path), str(svg_path)]
+        ]
+        converted = False
+        for cmd in converters:
+            try:
+                subprocess.run(cmd, check=True, capture_output=True)
+                print(f"✓ {svg_path.name} → {pdf_path.name}")
+                converted = True
+                break
+            except (subprocess.CalledProcessError, FileNotFoundError):
+                continue
+        if not converted:
+            print(f"⚠️ Konnte {svg_path.name} nicht konvertieren (kein Konverter verfügbar)")
+            print(f"  SVG-Datei verfügbar unter: {svg_path}")
     
     print("\n" + "=" * 80)
     print("EXPERIMENTE ABGESCHLOSSEN")

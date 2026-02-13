@@ -1,9 +1,13 @@
--e git+ssh://git@github.com/hjstephan/bool-mm.git@mainb#egg
+-e git+ssh://git@github.com/hjstephan/bool-mm.git@main#egg
+cairocffi
+CairoSVG
+cffi
 contourpy
 coverage
+cssselect2
 cycler
+defusedxml
 fonttools
--e git+ssh://git@github.com/hjstephan/graphs.git@main#egg
 iniconfig
 kiwisolver
 matplotlib
@@ -11,9 +15,12 @@ numpy
 packaging
 pillow
 pluggy
+pycparser
 Pygments
 pyparsing
 pytest
 pytest-cov
 python-dateutil
 six
+tinycss2
+webencodings

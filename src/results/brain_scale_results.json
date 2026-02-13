@@ -2,7 +2,7 @@
   "metadata": {
     "target_neurons": 86000000000,
     "avg_synapses": 7000,
-    "timestamp": "2026-01-19T03:09:46.440149"
+    "timestamp": "2026-02-13T06:06:03.426910"
   },
   "profiles": [
     {
@@ -13,7 +13,7 @@
       "diameter": 1.0,
       "avg_shortest_path": 1.0,
       "max_longest_path": 99.0,
-      "time_seconds": 1.1976045669998712
+      "time_seconds": 1.165448178000588
     },
     {
       "graph_type": "random_sparse",
@@ -23,47 +23,47 @@
       "diameter": 1.0,
       "avg_shortest_path": 1.0,
       "max_longest_path": 199.0,
-      "time_seconds": 10.701151539999955
+      "time_seconds": 10.629075987999386
     },
     {
       "graph_type": "scale_free",
       "n": 100,
       "m": 485,
       "kappa": 0.20618556701030927,
-      "diameter": 6.0,
-      "avg_shortest_path": 2.1358950328022495,
-      "max_longest_path": 19.0,
-      "time_seconds": 0.7894859539992467
+      "diameter": 5.0,
+      "avg_shortest_path": 2.0836614173228347,
+      "max_longest_path": 16.0,
+      "time_seconds": 0.7710419850000108
     },
     {
       "graph_type": "scale_free",
       "n": 200,
       "m": 985,
       "kappa": 0.20304568527918782,
-      "diameter": 9.0,
-      "avg_shortest_path": 2.5790007241129618,
-      "max_longest_path": 24.0,
-      "time_seconds": 7.097394546000032
+      "diameter": 8.0,
+      "avg_shortest_path": 2.4959960777904886,
+      "max_longest_path": 26.0,
+      "time_seconds": 6.954047669999454
     },
     {
       "graph_type": "small_world",
       "n": 100,
       "m": 300,
       "kappa": 0.3333333333333333,
-      "diameter": 15.0,
-      "avg_shortest_path": 6.376767676767677,
+      "diameter": 17.0,
+      "avg_shortest_path": 7.222020202020202,
       "max_longest_path": 99.0,
-      "time_seconds": 1.1607671850006227
+      "time_seconds": 1.1260850939997908
     },
     {
       "graph_type": "small_world",
       "n": 200,
       "m": 600,
       "kappa": 0.3333333333333333,
-      "diameter": 17.0,
-      "avg_shortest_path": 7.157185929648241,
+      "diameter": 25.0,
+      "avg_shortest_path": 8.861959798994976,
       "max_longest_path": 199.0,
-      "time_seconds": 10.4062406310004
+      "time_seconds": 10.196137945999908
     }
   ]
 }

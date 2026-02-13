@@ -21,7 +21,7 @@ matplotlib.use('Agg')
 
 def create_output_directory():
     """Erstellt Ausgabeverzeichnis für Plots."""
-    output_dir = Path(__file__).parent.parent / 'science'
+    output_dir = Path(__file__).parent.parent / 'src' / 'results'
     output_dir.mkdir(parents=True, exist_ok=True)
     return output_dir
 
@@ -370,24 +370,20 @@ def convert_svg_to_pdf():
     
     output_dir = create_output_directory()
     svg_files = list(output_dir.glob('brain_*.svg'))
-    
+    target_dir = Path(__file__).parent.parent / 'science'
+    target_dir.mkdir(parents=True, exist_ok=True)
     if not svg_files:
         print("Keine SVG-Dateien gefunden!")
         return
-    
     try:
         import subprocess
-        
         for svg_path in svg_files:
-            pdf_path = svg_path.with_suffix('.pdf')
-            
-            # Versuche inkscape, dann cairosvg, dann rsvg-convert
+            pdf_path = target_dir / (svg_path.stem + '.pdf')
             converters = [
                 ['inkscape', str(svg_path), '--export-filename', str(pdf_path)],
                 ['cairosvg', str(svg_path), '-o', str(pdf_path)],
                 ['rsvg-convert', '-f', 'pdf', '-o', str(pdf_path), str(svg_path)]
             ]
-            
             converted = False
             for cmd in converters:
                 try:
@@ -397,11 +393,9 @@ def convert_svg_to_pdf():
                     break
                 except (subprocess.CalledProcessError, FileNotFoundError):
                     continue
-            
             if not converted:
-                print(f"⚠ Konnte {svg_path.name} nicht konvertieren (kein Konverter verfügbar)")
+                print(f"⚠️ Konnte {svg_path.name} nicht konvertieren (kein Konverter verfügbar)")
                 print(f"  SVG-Datei verfügbar unter: {svg_path}")
-        
     except Exception as e:
         print(f"Fehler bei Konvertierung: {e}")
         print("SVG-Dateien wurden erstellt, können aber manuell konvertiert werden.")

@@ -1,0 +1,340 @@
+(venv) stephan@hp-255-17625:~/Git/graphs$ python3 src/brain_rotation_experiments.py 
+
+================================================================================
+  GEHIRN-ROTATIONS-EXPERIMENTE
+  Für: science/graphs.tex (Neues Kapitel)
+================================================================================
+
+================================================================================
+EXPERIMENT 1: ROTATIONSRICHTUNG IM GEHIRN
+================================================================================
+n=  8: Rotation-Effizienz=0.073, κ=0.500, Durchmesser=4.0
+n= 12: Rotation-Effizienz=0.158, κ=0.500, Durchmesser=6.0
+n= 16: Rotation-Effizienz=0.228, κ=0.500, Durchmesser=8.0
+n= 20: Rotation-Effizienz=0.276, κ=0.500, Durchmesser=10.0
+n= 24: Rotation-Effizienz=0.310, κ=0.500, Durchmesser=12.0
+
+SVG gespeichert: /home/stephan/Git/graphs/src/results/brain_rotation_direction.svg
+
+================================================================================
+EXPERIMENT 2: AD-HOC INFORMATIONSSELEKTION
+================================================================================
+Feed-forward (sensorisch)     : Adaptivität=1.28, Pfad-Effizienz=1.300
+Moderat rekurrent             : Adaptivität=1.13, Pfad-Effizienz=0.462
+Stark rekurrent               : Adaptivität=1.11, Pfad-Effizienz=0.783
+Vollständig vernetzt          : Adaptivität=1.00, Pfad-Effizienz=1.250
+
+SVG gespeichert: /home/stephan/Git/graphs/src/results/brain_adhoc_path_selection.svg
+
+================================================================================
+EXPERIMENT 3: RICHTUNGSVERGLEICH (FORWARD VS. BACKWARD)
+================================================================================
+Feed-forward (sensorisch): Forward=1.25, Backward=1.60, Ratio=0.78
+Reziprok (assoziativ)    : Forward=1.50, Backward=1.50, Ratio=1.00
+Ring (zyklisch)          : Forward=2.50, Backward=2.67, Ratio=0.94
+Vollständig (stark vernetzt): Forward=1.00, Backward=1.00, Ratio=1.00
+
+SVG gespeichert: /home/stephan/Git/graphs/src/results/brain_directional_comparison.svg
+
+================================================================================
+KONVERTIERUNG: SVG → PDF
+================================================================================
+✓ brain_directional_comparison.svg → brain_directional_comparison.pdf
+✓ brain_adhoc_path_selection.svg → brain_adhoc_path_selection.pdf
+✓ brain_rotation_direction.svg → brain_rotation_direction.pdf
+
+================================================================================
+  ALLE EXPERIMENTE ERFOLGREICH ABGESCHLOSSEN
+================================================================================
+
+Generierte Dateien im Verzeichnis 'science/':
+  1. brain_rotation_direction.svg (+ .pdf)
+  2. brain_adhoc_path_selection.svg (+ .pdf)
+  3. brain_directional_comparison.svg (+ .pdf)
+
+Diese Dateien können nun in graphs.tex eingebunden werden.
+================================================================================
+(venv) stephan@hp-255-17625:~/Git/graphs$ python3 src/brain_scale_graph_experiments.py 
+GRAPHPROFIL-EXPERIMENTE IM GEHIRN-MASSSTAB
+================================================================================
+Ziel: 86,000,000,000 Neuronen
+      ~7,000 Synapsen pro Neuron
+      ≈0.6 Billiarden Synapsen
+================================================================================
+================================================================================
+SKALIERBARKEITS-EXPERIMENT: Von kleinen zu großen Graphen
+================================================================================
+
+--- Graphtyp: random_sparse ---
+  n =   100 Knoten... κ=0.010, diameter=1.0, Zeit=1.165s
+  n =   200 Knoten... κ=0.005, diameter=1.0, Zeit=10.629s
+
+--- Graphtyp: scale_free ---
+  n =   100 Knoten... κ=0.206, diameter=5.0, Zeit=0.771s
+  n =   200 Knoten... κ=0.203, diameter=8.0, Zeit=6.954s
+
+--- Graphtyp: small_world ---
+  n =   100 Knoten... κ=0.333, diameter=17.0, Zeit=1.126s
+  n =   200 Knoten... κ=0.333, diameter=25.0, Zeit=10.196s
+
+================================================================================
+EXTRAPOLATION AUF GEHIRN-SKALA (86 Milliarden Knoten)
+================================================================================
+
+random_sparse:
+  Geschätzte Laufzeit: 3.62e+28 Sekunden
+                     = 1.15e+21 Jahre
+  (Annahme: O(n^3.19) Skalierung)
+  Geschätztes κ: 0.0076
+  Geschätzter Durchmesser: 20736.4
+
+scale_free:
+  Geschätzte Laufzeit: 1.72e+28 Sekunden
+                     = 5.46e+20 Jahre
+  (Annahme: O(n^3.17) Skalierung)
+  Geschätztes κ: 0.2046
+  Geschätzter Durchmesser: 165891.5
+
+small_world:
+  Geschätzte Laufzeit: 2.83e+28 Sekunden
+                     = 8.95e+20 Jahre
+  (Annahme: O(n^3.18) Skalierung)
+  Geschätztes κ: 0.3333
+  Geschätzter Durchmesser: 118.8
+
+================================================================================
+VERTEILUNGS-EXPERIMENT: 20 Samples pro Typ
+================================================================================
+
+random_sparse_{'p': 0.01}:
+  Sample 1/20... κ=1.149
+  Sample 2/20... κ=1.111
+  Sample 3/20... κ=1.099
+  Sample 4/20... κ=0.952
+  Sample 5/20... κ=0.980
+  Sample 6/20... κ=0.926
+  Sample 7/20... κ=0.962
+  Sample 8/20... κ=1.163
+  Sample 9/20... κ=0.971
+  Sample 10/20... κ=1.266
+  Sample 11/20... κ=1.010
+  Sample 12/20... κ=0.847
+  Sample 13/20... κ=1.020
+  Sample 14/20... κ=0.926
+  Sample 15/20... κ=1.111
+  Sample 16/20... κ=0.935
+  Sample 17/20... κ=1.149
+  Sample 18/20... κ=1.031
+  Sample 19/20... κ=1.111
+  Sample 20/20... κ=1.333
+  → κ: 1.053 ± 0.120
+  → Durchmesser: 10.3 ± 3.1
+
+random_sparse_{'p': 0.05}:
+  Sample 1/20... κ=0.182
+  Sample 2/20... κ=0.191
+  Sample 3/20... κ=0.193
+  Sample 4/20... κ=0.205
+  Sample 5/20... κ=0.202
+  Sample 6/20... κ=0.198
+  Sample 7/20... κ=0.204
+  Sample 8/20... κ=0.196
+  Sample 9/20... κ=0.199
+  Sample 10/20... κ=0.205
+  Sample 11/20... κ=0.187
+  Sample 12/20... κ=0.191
+  Sample 13/20... κ=0.212
+  Sample 14/20... κ=0.215
+  Sample 15/20... κ=0.198
+  Sample 16/20... κ=0.190
+  Sample 17/20... κ=0.198
+  Sample 18/20... κ=0.206
+  Sample 19/20... κ=0.204
+  Sample 20/20... κ=0.200
+  → κ: 0.199 ± 0.008
+  → Durchmesser: 6.2 ± 0.8
+
+scale_free_{'m': 3}:
+  Sample 1/20... κ=0.340
+  Sample 2/20... κ=0.340
+  Sample 3/20... κ=0.340
+  Sample 4/20... κ=0.340
+  Sample 5/20... κ=0.340
+  Sample 6/20... κ=0.340
+  Sample 7/20... κ=0.340
+  Sample 8/20... κ=0.340
+  Sample 9/20... κ=0.340
+  Sample 10/20... κ=0.340
+  Sample 11/20... κ=0.340
+  Sample 12/20... κ=0.340
+  Sample 13/20... κ=0.340
+  Sample 14/20... κ=0.340
+  Sample 15/20... κ=0.340
+  Sample 16/20... κ=0.340
+  Sample 17/20... κ=0.340
+  Sample 18/20... κ=0.340
+  Sample 19/20... κ=0.340
+  Sample 20/20... κ=0.340
+  → κ: 0.340 ± 0.000
+  → Durchmesser: 6.3 ± 0.9
+
+scale_free_{'m': 5}:
+  Sample 1/20... κ=0.206
+  Sample 2/20... κ=0.206
+  Sample 3/20... κ=0.206
+  Sample 4/20... κ=0.206
+  Sample 5/20... κ=0.206
+  Sample 6/20... κ=0.206
+  Sample 7/20... κ=0.206
+  Sample 8/20... κ=0.206
+  Sample 9/20... κ=0.206
+  Sample 10/20... κ=0.206
+  Sample 11/20... κ=0.206
+  Sample 12/20... κ=0.206
+  Sample 13/20... κ=0.206
+  Sample 14/20... κ=0.206
+  Sample 15/20... κ=0.206
+  Sample 16/20... κ=0.206
+  Sample 17/20... κ=0.206
+  Sample 18/20... κ=0.206
+  Sample 19/20... κ=0.206
+  Sample 20/20... κ=0.206
+  → κ: 0.206 ± 0.000
+  → Durchmesser: 6.3 ± 0.7
+
+small_world_{'k': 6, 'p': 0.1}:
+  Sample 1/20... κ=0.333
+  Sample 2/20... κ=0.333
+  Sample 3/20... κ=0.333
+  Sample 4/20... κ=0.333
+  Sample 5/20... κ=0.333
+  Sample 6/20... κ=0.333
+  Sample 7/20... κ=0.333
+  Sample 8/20... κ=0.333
+  Sample 9/20... κ=0.333
+  Sample 10/20... κ=0.333
+  Sample 11/20... κ=0.333
+  Sample 12/20... κ=0.333
+  Sample 13/20... κ=0.333
+  Sample 14/20... κ=0.333
+  Sample 15/20... κ=0.333
+  Sample 16/20... κ=0.333
+  Sample 17/20... κ=0.333
+  Sample 18/20... κ=0.333
+  Sample 19/20... κ=0.333
+  Sample 20/20... κ=0.333
+  → κ: 0.333 ± 0.000
+  → Durchmesser: 14.8 ± 1.8
+
+small_world_{'k': 10, 'p': 0.3}:
+  Sample 1/20... κ=0.200
+  Sample 2/20... κ=0.200
+  Sample 3/20... κ=0.200
+  Sample 4/20... κ=0.200
+  Sample 5/20... κ=0.200
+  Sample 6/20... κ=0.200
+  Sample 7/20... κ=0.200
+  Sample 8/20... κ=0.200
+  Sample 9/20... κ=0.200
+  Sample 10/20... κ=0.200
+  Sample 11/20... κ=0.200
+  Sample 12/20... κ=0.200
+  Sample 13/20... κ=0.200
+  Sample 14/20... κ=0.200
+  Sample 15/20... κ=0.200
+  Sample 16/20... κ=0.200
+  Sample 17/20... κ=0.200
+  Sample 18/20... κ=0.200
+  Sample 19/20... κ=0.200
+  Sample 20/20... κ=0.200
+  → κ: 0.200 ± 0.000
+  → Durchmesser: 6.1 ± 0.3
+
+hierarchical_{'levels': 3}:
+  Sample 1/20... κ=0.155
+  Sample 2/20... κ=0.154
+  Sample 3/20... κ=0.154
+  Sample 4/20... κ=0.155
+  Sample 5/20... κ=0.154
+  Sample 6/20... κ=0.154
+  Sample 7/20... κ=0.155
+  Sample 8/20... κ=0.154
+  Sample 9/20... κ=0.154
+  Sample 10/20... κ=0.155
+  Sample 11/20... κ=0.153
+  Sample 12/20... κ=0.155
+  Sample 13/20... κ=0.155
+  Sample 14/20... κ=0.155
+  Sample 15/20... κ=0.154
+  Sample 16/20... κ=0.154
+  Sample 17/20... κ=0.154
+  Sample 18/20... κ=0.154
+  Sample 19/20... κ=0.154
+  Sample 20/20... κ=0.153
+  → κ: 0.154 ± 0.001
+  → Durchmesser: 5.1 ± 0.3
+
+modular_{'num_modules': 10}:
+  Sample 1/20... κ=0.575
+  Sample 2/20... κ=0.559
+  Sample 3/20... κ=0.472
+  Sample 4/20... κ=0.556
+  Sample 5/20... κ=0.515
+  Sample 6/20... κ=0.578
+  Sample 7/20... κ=0.595
+  Sample 8/20... κ=0.521
+  Sample 9/20... κ=0.532
+  Sample 10/20... κ=0.645
+  Sample 11/20... κ=0.581
+  Sample 12/20... κ=0.541
+  Sample 13/20... κ=0.541
+  Sample 14/20... κ=0.599
+  Sample 15/20... κ=0.529
+  Sample 16/20... κ=0.535
+  Sample 17/20... κ=0.595
+  Sample 18/20... κ=0.552
+  Sample 19/20... κ=0.556
+  Sample 20/20... κ=0.543
+  → κ: 0.556 ± 0.037
+  → Durchmesser: 8.6 ± 1.5
+
+cortical_column_{'layers': 6}:
+  Sample 1/20... κ=0.163
+  Sample 2/20... κ=0.158
+  Sample 3/20... κ=0.157
+  Sample 4/20... κ=0.158
+  Sample 5/20... κ=0.159
+  Sample 6/20... κ=0.158
+  Sample 7/20... κ=0.163
+  Sample 8/20... κ=0.156
+  Sample 9/20... κ=0.160
+  Sample 10/20... κ=0.159
+  Sample 11/20... κ=0.165
+  Sample 12/20... κ=0.158
+  Sample 13/20... κ=0.164
+  Sample 14/20... κ=0.157
+  Sample 15/20... κ=0.162
+  Sample 16/20... κ=0.158
+  Sample 17/20... κ=0.157
+  Sample 18/20... κ=0.160
+  Sample 19/20... κ=0.166
+  Sample 20/20... κ=0.157
+  → κ: 0.160 ± 0.003
+  → Durchmesser: 6.7 ± 0.5
+
+Erstelle Visualisierungen...
+Visualisierungen gespeichert in: src/results
+
+Ergebnisse gespeichert: src/results/brain_scale_results.json
+✓ diameter_distribution.svg → diameter_distribution.pdf
+✓ brain_directional_comparison.svg → brain_directional_comparison.pdf
+✓ kappa_distribution.svg → kappa_distribution.pdf
+✓ brain_adhoc_path_selection.svg → brain_adhoc_path_selection.pdf
+✓ kappa_vs_diameter.svg → kappa_vs_diameter.pdf
+✓ brain_rotation_direction.svg → brain_rotation_direction.pdf
+
+================================================================================
+EXPERIMENTE ABGESCHLOSSEN
+================================================================================
+(venv) stephan@hp-255-17625:~/Git/graphs$ 
+
