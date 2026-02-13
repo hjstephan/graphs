@@ -2,19 +2,30 @@
 
 [![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/hjstephan/graphs/releases)
 [![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Tests](https://img.shields.io/badge/tests-51%20passed-brightgreen.svg)](tests/)
 [![Coverage](https://img.shields.io/badge/coverage-98%25-brightgreen.svg)](doc/coverage/)
 
-Implementierung der Algorithmen aus der Arbeit "Graphen mit Knoten und Kanten" von Stephan Epp.
+Arbeit zu "Graphen mit Knoten und Kanten"
 
-## 🎯 Überblick
+## Erwerb der Arbeit
 
-Dieses Projekt implementiert effiziente Algorithmen zur **optimalen** Berechnung von Graphprofilen unter Verwendung der Signatur-Methode aus der Boolean Matrixmultiplikation.
+Die vollständige Arbeit kann für 244.000,00 EUR erworben werden.
 
-**Kernaussage**: Jeder Graph wird optimal in die Graphprofilverteilung eingeordnet. Diese Einordnung ist nicht verbesserbar, da sie vollständig deterministisch erfolgt und jeden Knoten und jede Kante berücksichtigt.
+### Zahlungsinformationen
 
-### 🌟 Hauptmerkmale
+Kontoinhaber: Stephan Epp  
+IBAN: DE11 4767 0224 0082 2296 00  
+BIC: DEUTDEDBP04  
+
+Wichtig: Der Geist Gottes wurde beschworen, dass welche Regierung diese Forschungsergebnisse nutzt, ohne dafür den angezeigten Preis zu bezahlen, dass der verantwortliche Regierende dafür vom Geist Gottes mit dem Tod bestraft wird.
+
+## Überblick
+
+Dieses Projekt implementiert effiziente Algorithmen zur **optimalen** Berechnung von Graphprofilen und Gehirn-Informationsverarbeitung mit Rotationsrichtung. Dabei wird die Signatur-Methode aus der Boolean Matrixmultiplikation verwendet.
+
+**Aussage**: Jeder Graph wird optimal in die Graphprofilverteilung eingeordnet. Diese Einordnung ist nicht verbesserbar, da sie vollständig deterministisch erfolgt und jeden Knoten und jede Kante berücksichtigt.
+
+### Hauptmerkmale
 
 - **Boolean Matrixmultiplikation in O(n²)** statt O(n³)
 - **Graphprofil-Berechnung in O(n³)** für:
@@ -30,63 +41,27 @@ Dieses Projekt implementiert effiziente Algorithmen zur **optimalen** Berechnung
 - **Vollständige Testsuite**: 51 Tests mit 98% Code Coverage
 - Experimente mit SVG-Visualisierungen
 
-### 📊 Qualitätsmetriken
-
-- ✅ **51 Tests** - Alle bestanden
-- ✅ **98% Code Coverage** - Vollständige Testabdeckung
-- ✅ **Type Hints** - Vollständige Typisierung
-- ✅ **Dokumentation** - Umfassende Docstrings
-- ✅ **Wissenschaftliche Arbeit** - 46 Seiten LaTeX-Dokumentation
-
-## 📦 Release v2.0.0
+## Release v2.0.0
 
 Diese Version enthält die vollständige Implementierung der Algorithmen aus der wissenschaftlichen Arbeit mit folgenden Highlights:
 
-### ✨ Neue Features
-- 🧠 Gehirn-Informationsverarbeitung mit Rotationsrichtung
-- 📊 Bidirektionale Graphprofil-Analyse (Forward/Backward)
-- 🔄 Rotationsfluss-Analyse für zirkuläre Netzwerke
-- 📈 Erweiterte Statistiken und Metriken
+### Neue Features
+- Gehirn-Informationsverarbeitung mit Rotationsrichtung
+- Bidirektionale Graphprofil-Analyse (Forward/Backward)
+- Rotationsfluss-Analyse für zirkuläre Netzwerke
+- Erweiterte Statistiken und Metriken
 
-### 🔧 Verbesserungen
-- 📝 Aktualisierte LaTeX-Dokumentation mit microtype-Paket
-- 🧪 Erweiterte Testsuite mit 51 Tests
-- 📊 98% Code Coverage
-- 🗂️ Bessere Code-Struktur (alle Module in src/)
+### Verbesserungen
+- Aktualisierte LaTeX-Dokumentation mit microtype-Paket
+- Erweiterte Testsuite mit 51 Tests
+- 98% Code Coverage
+- Bessere Code-Struktur (alle Module in src/)
 
-### 📄 Dokumentation
-- 📖 46-seitige wissenschaftliche Arbeit (graphs.pdf)
-- 📚 Vollständige API-Dokumentation
-- 🎓 Tutorials und Beispiele
-- 🔬 Experimentelle Validierung
-
-## 📁 Projektstruktur
-
-```
-graphs/
-├── science/
-│   ├── graphs.tex                          # Wissenschaftliche Arbeit (LaTeX)
-│   └── graphs.pdf                          # Kompilierte PDF (46 Seiten)
-├── src/
-│   ├── __init__.py
-│   ├── graph_profile.py                    # Graphprofil-Berechnung (Kernmodul)
-│   ├── brain_information_processing.py     # Gehirn-Rotationsanalyse
-│   ├── brain_rotation_experiments.py       # Rotationsexperimente
-│   ├── brain_scale_graph_experiments.py    # Skalierungsexperimente
-│   ├── boolean_matrix_multiplier.py        # Boolean Matrix Ops
-│   ├── demo_brain_direction.py             # Demo: Drehrichtung
-│   ├── demo_brain_rotation.py              # Demo: Rotation
-│   └── results/                            # Experimentelle Ergebnisse
-├── tests/                                  # Testsuite (51 Tests)
-│   ├── test_graph_profile.py               # Graphprofil-Tests
-│   ├── test_brain_information_processing.py
-│   ├── test_brain_direction.py
-│   └── test_integration.py                 # Integrationstests
-├── doc/
-│   └── coverage/                           # HTML Coverage Report (98%)
-├── pyproject.toml                          # Projekt-Konfiguration
-└── README.md                               # Diese Datei
-```
+### Dokumentation
+- 46-seitige wissenschaftliche Arbeit (graphs.pdf)
+- Vollständige API-Dokumentation
+- Tutorials und Beispiele
+- Experimentelle Validierung
 
 ## Installation
 
@@ -116,7 +91,7 @@ pip install -e .
 pip install -e ".[test]"
 ```
 
-## 📖 Verwendung
+## Verwendung
 
 ### Boolean Matrixmultiplikation
 
@@ -390,7 +365,7 @@ D, L, kappa = calculator.compute_profile(adj)
 
 Die optimale Profilberechnung hat weitreichende Anwendungen in verschiedenen Domänen:
 
-### 🧠 Neurowissenschaften & Gehirnforschung
+### Neurowissenschaften & Gehirnforschung
 
 **Konnektomanalyse:**
 - Optimale Charakterisierung neuronaler Netzwerke (86 Mrd. Neuronen)
@@ -449,7 +424,7 @@ print(f"Adaptivitäts-Score: {analysis['adaptivity_score']}")
 print(f"Interpretation: {analysis['interpretation']}")
 ```
 
-### 🤖 Künstliche Intelligenz
+### Künstliche Intelligenz
 
 **Neural Architecture Search (NAS):**
 - Deterministische Bewertung von Netzwerkarchitekturen
@@ -472,7 +447,7 @@ for epoch in range(num_epochs):
         print(f"Warnung: Strukturelle Anomalie in Epoche {epoch}")
 ```
 
-### 🏢 Rechenzentren & Cloud Computing
+### Rechenzentren & Cloud Computing
 
 **Datacenter-Topologie-Optimierung:**
 - Finde optimale Netzwerktopologie für gegebene Anforderungen
@@ -495,7 +470,7 @@ for topo in topologies:
         print(f"{topo.name}: Erfüllt Anforderungen")
 ```
 
-### 👥 Soziale Netzwerke
+### Soziale Netzwerke
 
 **Influencer-Identifikation:**
 - Finde Knoten mit minimaler durchschnittlicher Distanz (zentrale Knoten)
@@ -528,7 +503,7 @@ target = max(centrality, key=centrality.get)
 print(f"Drug Target: {target}")
 ```
 
-### 📡 Kommunikationsnetzwerke
+### Kommunikationsnetzwerke
 
 **Routing-Optimierung:**
 - Nutze D-Matrix für optimale Pfadwahl
@@ -538,7 +513,7 @@ print(f"Drug Target: {target}")
 - Berechne Profil nach simuliertem Knotenausfall
 - Quantifiziere Robustheit durch Δκ
 
-### 🚦 Verkehrs- & Logistiknetzwerke
+### Verkehrs- & Logistiknetzwerke
 
 **Infrastruktur-Planung:**
 - Optimiere Straßennetz für minimalen Durchmesser
@@ -552,7 +527,7 @@ print(f"Drug Target: {target}")
 
 ### Determinismus vs. Probabilismus
 
-**These**: Für Probleme, die deterministisch in polynomieller Zeit lösbar sind, sind probabilistische Methoden suboptimal.
+**Aussage**: Für Probleme, die deterministisch in polynomieller Zeit lösbar sind, sind probabilistische Methoden suboptimal.
 
 Die Graphprofilberechnung ist ein Beispiel für ein Problem, bei dem:
 - Deterministische Lösung existiert (diese Arbeit)
@@ -564,10 +539,10 @@ Die Graphprofilberechnung ist ein Beispiel für ein Problem, bei dem:
 ### Komplexitätstheorie
 
 Graphprofil-Berechnung ist in **P** (polynomielle Zeit, deterministisch):
-- Hamiltonpfad: NP-vollständig ❌
-- Maximale Clique: NP-vollständig ❌
-- Graphfärbung: NP-vollständig ❌
-- **Graphprofil: P** ✅ (O(n³))
+- Hamiltonpfad: NP-vollständig
+- Maximale Clique: NP-vollständig
+- Graphfärbung: NP-vollständig
+- **Graphprofil: P** (O(n³))
 
 ### Universalität
 
@@ -578,117 +553,33 @@ Die Signatur-Methode ist übertragbar auf:
 
 ## Ausblick & Zukünftige Arbeiten
 
-### 🚀 Parallelisierung
+### Parallelisierung
 
 Die Signatur-Berechnung ist inhärent parallelisierbar:
 - GPU-Implementierung für massive Beschleunigung
 - Potenzielle Reduktion auf O(n²) Gesamtlaufzeit mit ausreichend Prozessoren
 
-### 📊 Sparse Graphen
+### Sparse Graphen
 
 Viele reale Graphen haben |E| = O(n):
 - Anpassung für komprimierte Darstellung (CSR/CSC)
 - Potenzielle Reduktion auf O(n·|E|) für sparse Graphen
 
-### ⚡ Dynamische Graphen
+### Dynamische Graphen
 
 Inkrementelle Updates nach Kantenänderung:
 - Update Profil in O(n²) statt vollständiger Neuberechnung in O(n³)
 - Wichtig für zeitveränderliche Netzwerke
 
-### 🔮 Quantencomputing
+### Quantencomputing
 
 Übertragung der Signatur-Methode auf Quantencomputer:
 - Potenzielle Laufzeit unterhalb O(n²)
 - Bitoperationen → Qubit-Operationen
 
-### 🗄️ Universelle Graphdatenbank
+### Universelle Graphdatenbank
 
 Vision: Datenbank mit Millionen bekannter Graphprofile
 - Query: "Finde Graphen mit κ ∈ [1.0, 1.5] und diameter < 10"
 - Similarity Search: "Ähnlichste Graphen zu Query"
 - Pattern Discovery: Wiederkehrende Strukturen über Domänen
-
----
-
-## 🤝 Beitragen
-
-Beiträge sind willkommen! Bitte beachten Sie folgende Richtlinien:
-
-### Entwicklungs-Setup
-
-```bash
-# Repository forken und klonen
-git clone https://github.com/<your-username>/graphs.git
-cd graphs
-
-# Entwicklungsumgebung einrichten
-python -m venv venv
-source venv/bin/activate
-pip install -e ".[test]"
-
-# Tests ausführen
-pytest -v
-
-# Coverage-Report generieren
-pytest --cov=src --cov-report=html
-```
-
-### Pull Request Prozess
-
-1. Erstellen Sie einen Feature-Branch (`git checkout -b feature/AmazingFeature`)
-2. Committen Sie Ihre Änderungen (`git commit -m 'Add some AmazingFeature'`)
-3. Stellen Sie sicher, dass alle Tests bestehen (`pytest`)
-4. Pushen Sie den Branch (`git push origin feature/AmazingFeature`)
-5. Öffnen Sie einen Pull Request
-
-### Code-Qualitätsstandards
-
-- ✅ Alle Tests müssen bestehen (pytest)
-- ✅ Code Coverage sollte mindestens 95% sein
-- ✅ Type Hints für alle öffentlichen Funktionen
-- ✅ Docstrings im Google-Stil
-- ✅ PEP 8 Konformität
-
-## 📜 Lizenz
-
-Dieses Projekt ist unter der MIT-Lizenz lizenziert - siehe [LICENSE](LICENSE) Datei für Details.
-
-## 👤 Autor
-
-**Stephan Epp**
-- Email: hjstephan86@gmail.com
-- GitHub: [@hjstephan](https://github.com/hjstephan)
-
-## 📚 Zitierung
-
-Wenn Sie diese Arbeit in Ihrer Forschung verwenden, zitieren Sie bitte:
-
-```bibtex
-@misc{epp2024graphs,
-  author = {Epp, Stephan},
-  title = {Graphen mit Knoten und Kanten: Optimale Einordnung in die Graphprofilverteilung},
-  year = {2024},
-  publisher = {GitHub},
-  journal = {GitHub repository},
-  howpublished = {\url{https://github.com/hjstephan/graphs}},
-  version = {1.1.0}
-}
-```
-
-## 🙏 Danksagungen
-
-- NumPy-Community für die exzellente wissenschaftliche Computing-Bibliothek
-- pytest-Entwickler für das hervorragende Testing-Framework
-- LaTeX-Community für das professionelle Typesetting-System
-
-## 📞 Support
-
-Bei Fragen oder Problemen:
-- 🐛 [Issues](https://github.com/hjstephan/graphs/issues) - Fehlerberichte und Feature-Requests
-- 💬 [Discussions](https://github.com/hjstephan/graphs/discussions) - Allgemeine Fragen und Diskussionen
-- 📧 Email: hjstephan86@gmail.com
-
----
-
-**Kernbotschaft**: *Jeder Graph wird optimal mit Einordnung in die Graphprofilverteilung charakterisiert. Darauf basierende Entscheidungen sind deterministisch und reproduzierbar.*
