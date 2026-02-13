@@ -5,8 +5,6 @@ Implementiert die Algorithmen aus der Arbeit graphs.tex
 
 import numpy as np
 from typing import Tuple, Dict, Optional, Any
-import sys
-import os
 
 from src.boolean_matrix_multiplier import BooleanMatrixMultiplier
 

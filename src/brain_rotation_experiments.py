@@ -13,17 +13,11 @@ import matplotlib.pyplot as plt
 import matplotlib
 from pathlib import Path
 import sys
-import os
-
-# Setze Backend für nicht-interaktive Umgebung
-matplotlib.use('Agg')
-
-# Füge src zum Path hinzu
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-
 from src.graph_profile import GraphProfileCalculator
 from src.brain_information_processing import BrainInformationProcessor
 
+# Setze Backend für nicht-interaktive Umgebung
+matplotlib.use('Agg')
 
 def create_output_directory():
     """Erstellt Ausgabeverzeichnis für Plots."""

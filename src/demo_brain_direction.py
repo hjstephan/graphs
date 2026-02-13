@@ -11,13 +11,7 @@ aktuellen Synapsenverknüpfung passt.
 
 import numpy as np
 import sys
-import os
-
-# Füge src zum Path hinzu
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-
 from src.graph_profile import GraphProfileCalculator
-
 
 def print_section(title):
     """Hilfsfunktion für formatierte Ausgabe."""
