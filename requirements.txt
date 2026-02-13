@@ -1,0 +1,19 @@
+-e git+ssh://git@github.com/hjstephan/bool-mm.git@mainb#egg
+contourpy
+coverage
+cycler
+fonttools
+-e git+ssh://git@github.com/hjstephan/graphs.git@main#egg
+iniconfig
+kiwisolver
+matplotlib
+numpy
+packaging
+pillow
+pluggy
+Pygments
+pyparsing
+pytest
+pytest-cov
+python-dateutil
+six
